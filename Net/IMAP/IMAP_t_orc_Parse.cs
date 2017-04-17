@@ -41,7 +41,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string[] code_value = r.ReadParenthesized().Split(new char[]{' '},2);
-            if(!string.Equals("PARSE",code_value[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("PARSE",code_value[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid PARSE response value.","r");
             }
 

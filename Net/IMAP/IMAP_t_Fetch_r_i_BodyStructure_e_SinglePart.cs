@@ -148,7 +148,7 @@ namespace LumiSoft.Net.IMAP
 
             #region Text/xxx fields
 
-            if(string.Equals("text",type,StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals("text",type, Helpers.GetDefaultIgnoreCaseComparison())){
                 // body encoded text lines count
                 string linesCount = IMAP_Utils.ReadString(r);
                 if(string.IsNullOrEmpty(size)){
@@ -163,7 +163,7 @@ namespace LumiSoft.Net.IMAP
 
             #region Message/xxx fields
 
-            if(string.Equals("message",type,StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals("message",type, Helpers.GetDefaultIgnoreCaseComparison())){
                 // envelope structure
                 r.ReadToFirstChar();
                 // Read ENVELOPE

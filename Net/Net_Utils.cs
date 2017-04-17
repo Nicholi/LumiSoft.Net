@@ -488,7 +488,7 @@ namespace LumiSoft.Net
                 throw new ArgumentNullException("text");
             }
 
-			return BitConverter.ToString(Encoding.Default.GetBytes(text)).ToLower().Replace("-","");
+			return BitConverter.ToString(Helpers.GetDefaultEncoding().GetBytes(text)).ToLower().Replace("-","");
 		}
 
 		#endregion
@@ -914,14 +914,18 @@ namespace LumiSoft.Net
                 throw new ArgumentNullException("text");
             }
 
+#if NETSTANDARD
+            System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
+#else
             System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();			
-			byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(text));
+#endif
+            byte[] hash = md5.ComputeHash(Helpers.GetDefaultEncoding().GetBytes(text));
 
             if(hex){
 			    return ToHex(hash).ToLower();
             }
             else{
-                return System.Text.Encoding.Default.GetString(hash);
+                return Helpers.GetDefaultEncoding().GetString(hash);
             }
         }
 

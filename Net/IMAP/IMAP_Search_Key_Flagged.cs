@@ -36,7 +36,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"FLAGGED",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"FLAGGED", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'FLAGGED' key.");
             }
 

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+#if NETSTANDARD
+using System.Reflection;
+#endif
 
 namespace LumiSoft.Net.MIME
 {
@@ -87,7 +90,11 @@ namespace LumiSoft.Net.MIME
                 if(value == null){
                     throw new ArgumentNullException("DefaultHeaderField");
                 }                
-                if(!value.GetType().IsSubclassOf(typeof(MIME_h))){
+                if(!value.GetType()
+#if NETSTANDARD
+                    .GetTypeInfo()
+#endif
+                    .IsSubclassOf(typeof(MIME_h))){
                     throw new ArgumentException("Property 'DefaultHeaderField' value must be based on MIME_h class.");
                 }
 

@@ -41,7 +41,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SENTSINCE",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SENTSINCE", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SENTSINCE' key.");
             }
             string value = r.ReadWord();

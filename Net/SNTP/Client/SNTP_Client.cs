@@ -62,6 +62,7 @@ namespace LumiSoft.Net.SNTP.Client
                 2030 5. For unicast request we need to fill version and mode only.
                 
             */
+            throw new NotImplementedException();
         }
     }
 }

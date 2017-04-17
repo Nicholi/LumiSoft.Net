@@ -30,9 +30,11 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <OutputPath>bin\$(Configuration)\netframework$(TargetFrameworkVersion)\</OutputPath>
+    <BaseIntermediateOutputPath>obj\$(Configuration)\netframework$(TargetFrameworkVersion)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -55,7 +57,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -79,7 +80,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug 3.5|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug 3.5\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>$(OutputPath)\LumiSoft.Net.xml</DocumentationFile>
@@ -90,7 +90,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU'">
-    <OutputPath>bin\Release 3.5\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>$(OutputPath)\LumiSoft.Net.xml</DocumentationFile>
@@ -149,6 +148,7 @@
     <Compile Include="AUTH\AUTH_SASL_Client_XOAuth.cs" />
     <Compile Include="AUTH\AUTH_SASL_Client_XOAuth2.cs" />
     <Compile Include="ByteBuilder.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="TcpClientSecurity.cs" />
     <Compile Include="DNS\Client\DNS_ClientCache.cs" />
     <Compile Include="DNS\Client\DNS_ClientTransaction.cs" />
@@ -596,9 +596,7 @@
     <Compile Include="TCP\TCP_ServerSession.cs" />
     <Compile Include="TCP\TCP_SessionCollection.cs" />
     <Compile Include="TCP\TCP_ServerSessionEventArgs.cs" />
-    <Compile Include="TimerEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="TimerEx.cs" />
     <Compile Include="UDP\UDP_Server.cs" />
     <Compile Include="URI\AbsoluteUri.cs" />
     <Compile Include="DNS\DNS_rr_A.cs">

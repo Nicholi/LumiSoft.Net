@@ -35,7 +35,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"ALL",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"ALL", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'ALL' key.");
             }
 

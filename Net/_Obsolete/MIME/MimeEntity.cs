@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using LumiSoft.Net.IO;
@@ -17,7 +18,8 @@ namespace LumiSoft.Net.Mime
 		private MimeEntity            m_pParentEntity     = null;
 		private MimeEntityCollection  m_pChildEntities    = null;
 		private byte[]                m_EncodedData       = null;
-		private Hashtable             m_pHeaderFieldCache = null;
+		private Dictionary<String, AddressList>
+                                      m_pHeaderFieldCache = null;
 
 		/// <summary>
 		/// Default constructor.
@@ -26,7 +28,7 @@ namespace LumiSoft.Net.Mime
 		{
 			m_pHeader = new HeaderFieldCollection();
 			m_pChildEntities = new MimeEntityCollection(this);
-			m_pHeaderFieldCache = new Hashtable();            
+			m_pHeaderFieldCache = new Dictionary<String, AddressList>();            
 		}
 
 
@@ -203,7 +205,7 @@ namespace LumiSoft.Net.Mime
 		public void ToStream(Stream storeStream)
 		{			
 			// Write headers
-			byte[] data = System.Text.Encoding.Default.GetBytes(FoldHeader(this.HeaderString));
+			byte[] data = Helpers.GetDefaultEncoding().GetBytes(FoldHeader(this.HeaderString));
 			storeStream.Write(data,0,data.Length);
 
 			// If multipart entity, write child entities.(multipart entity don't contain data, it contains nested entities )
@@ -211,7 +213,7 @@ namespace LumiSoft.Net.Mime
 				string boundary = this.ContentType_Boundary;			
 				foreach(MimeEntity entity in this.ChildEntities){
 					// Write boundary start. Syntax: <CRLF>--BoundaryID<CRLF>
-					data = System.Text.Encoding.Default.GetBytes("\r\n--" + boundary + "\r\n");
+					data = Helpers.GetDefaultEncoding().GetBytes("\r\n--" + boundary + "\r\n");
 					storeStream.Write(data,0,data.Length);
 
 					// Force child entity to store itself
@@ -219,7 +221,7 @@ namespace LumiSoft.Net.Mime
 				}
 
 				// Write boundaries end Syntax: <CRLF>--BoundaryID--<CRLF>
-				data = System.Text.Encoding.Default.GetBytes("\r\n--" + boundary + "--\r\n");
+				data = Helpers.GetDefaultEncoding().GetBytes("\r\n--" + boundary + "--\r\n");
 				storeStream.Write(data,0,data.Length);
 			}
 			// If singlepart (text,image,audio,video,message, ...), write entity data.
@@ -1002,7 +1004,7 @@ namespace LumiSoft.Net.Mime
 			get{ 
 				if(m_pHeader.Contains("To:")){
 					// There is already cached version, return it
-					if(m_pHeaderFieldCache.Contains("To:")){
+					if(m_pHeaderFieldCache.ContainsKey("To:")){
 						return (AddressList)m_pHeaderFieldCache["To:"];
 					}
 					// These isn't cached version, we need to create it
@@ -1059,7 +1061,7 @@ namespace LumiSoft.Net.Mime
 			get{
 				if(m_pHeader.Contains("Cc:")){
 					// There is already cached version, return it
-					if(m_pHeaderFieldCache.Contains("Cc:")){
+					if(m_pHeaderFieldCache.ContainsKey("Cc:")){
 						return (AddressList)m_pHeaderFieldCache["Cc:"];
 					}
 					// These isn't cached version, we need to create it
@@ -1116,7 +1118,7 @@ namespace LumiSoft.Net.Mime
 			get{ 
 				if(m_pHeader.Contains("Bcc:")){
 					// There is already cached version, return it
-					if(m_pHeaderFieldCache.Contains("Bcc:")){
+					if(m_pHeaderFieldCache.ContainsKey("Bcc:")){
 						return (AddressList)m_pHeaderFieldCache["Bcc:"];
 					}
 					// These isn't cached version, we need to create it
@@ -1173,7 +1175,7 @@ namespace LumiSoft.Net.Mime
 			get{  
 				if(m_pHeader.Contains("From:")){
 					// There is already cached version, return it
-					if(m_pHeaderFieldCache.Contains("From:")){
+					if(m_pHeaderFieldCache.ContainsKey("From:")){
 						return (AddressList)m_pHeaderFieldCache["From:"];
 					}
 					// These isn't cached version, we need to create it
@@ -1254,7 +1256,7 @@ namespace LumiSoft.Net.Mime
 			get{ 
 				if(m_pHeader.Contains("Reply-To:")){
 					// There is already cached version, return it
-					if(m_pHeaderFieldCache.Contains("Reply-To:")){
+					if(m_pHeaderFieldCache.ContainsKey("Reply-To:")){
 						return (AddressList)m_pHeaderFieldCache["Reply-To:"];
 					}
 					// These isn't cached version, we need to create it
@@ -1422,7 +1424,7 @@ namespace LumiSoft.Net.Mime
 					string charSet = this.ContentType_CharSet;
 					// Charset isn't specified, use system default
 					if(charSet == null){
-						return System.Text.Encoding.Default.GetString(this.Data);
+						return Helpers.GetDefaultEncoding().GetString(this.Data);
 					}
 					else{
 						return System.Text.Encoding.GetEncoding(charSet).GetString(this.Data);
@@ -1430,7 +1432,7 @@ namespace LumiSoft.Net.Mime
 				}
 				// Not supported charset, use default
 				catch{
-					return System.Text.Encoding.Default.GetString(this.Data);
+					return Helpers.GetDefaultEncoding().GetString(this.Data);
 				}
 			}
 

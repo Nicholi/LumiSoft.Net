@@ -150,19 +150,19 @@ namespace LumiSoft.Net.SDP
             // Remove all old stream mode attributes.
             for(int i=0;i<m_pAttributes.Count;i++){
                 SDP_Attribute sdpAttribute = m_pAttributes[i];
-                if(string.Equals(sdpAttribute.Name,"sendrecv",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(sdpAttribute.Name,"sendrecv", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pAttributes.RemoveAt(i);
                     i--;
                 }
-                else if(string.Equals(sdpAttribute.Name,"sendonly",StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(sdpAttribute.Name,"sendonly", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pAttributes.RemoveAt(i);
                     i--;
                 }
-                else if(string.Equals(sdpAttribute.Name,"recvonly",StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(sdpAttribute.Name,"recvonly", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pAttributes.RemoveAt(i);
                     i--;
                 }
-                else if(string.Equals(sdpAttribute.Name,"inactive",StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(sdpAttribute.Name,"inactive", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pAttributes.RemoveAt(i);
                     i--;
                 }

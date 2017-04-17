@@ -57,7 +57,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"HEADER",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"HEADER", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'HEADER' key.");
             }
             string fieldName = IMAP_Utils.ReadString(r);

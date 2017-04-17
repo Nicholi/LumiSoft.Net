@@ -104,7 +104,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerA_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerA_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 3261 17.1.1.2.
                 When timer A fires, the client transaction MUST retransmit the
@@ -141,7 +145,7 @@ namespace LumiSoft.Net.SIP.Stack
 
                     // Update(double current) next transmit time.
                     m_pTimerA.Interval *= 2;
-                    m_pTimerA.Enabled = true;
+                    m_pTimerA.Start();
 
                     // Log
                     if(this.Stack.Logger != null){
@@ -160,7 +164,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerB_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerB_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 3261 17.1.1.2.
                 If the client transaction is still in the "Calling" state when timer
@@ -202,7 +210,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerD_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerD_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 3261 17.1.1.2.
                 If timer D fires while the client transaction is in the "Completed"
@@ -230,7 +242,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerE_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerE_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 3261 17.1.2.2.
                 If timer E fires while in Trying state, the timer is reset, but this time with a value of MIN(2*T1, T2).
@@ -260,7 +276,7 @@ namespace LumiSoft.Net.SIP.Stack
 
                     // Update(double current) next transmit time.
                     m_pTimerE.Interval = Math.Min(m_pTimerE.Interval * 2,SIP_TimerConstants.T2);
-                    m_pTimerE.Enabled = true;
+                    m_pTimerE.Start();
 
                     // Log
                     if(this.Stack.Logger != null){
@@ -279,7 +295,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerF_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerF_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 3261 17.1.2.2.
                 If Timer F fires while in the "Trying" state, the client transaction SHOULD inform the TU about the
@@ -328,7 +348,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerK_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerK_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             lock(this.SyncRoot){
                 if(this.State == SIP_TransactionState.Completed){
@@ -351,7 +375,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerM_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerM_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             /* RFC 6026 7.2.
                 When Timer M fires and the state machine is in the "Accepted" state,
@@ -425,9 +453,8 @@ namespace LumiSoft.Net.SIP.Stack
                             
                             // Start timer A for unreliable transports.
                             if(!this.Flow.IsReliable){
-                                m_pTimerA = new TimerEx(SIP_TimerConstants.T1,false);
-                                m_pTimerA.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerA_Elapsed);
-                                m_pTimerA.Enabled = true;
+                                m_pTimerA = new TimerEx(m_pTimerA_Elapsed, SIP_TimerConstants.T1,false);
+                                m_pTimerA.Start();
 
                                 // Log
                                 if(this.Stack.Logger != null){
@@ -436,9 +463,8 @@ namespace LumiSoft.Net.SIP.Stack
                             }
 
                             // Start timer B.
-                            m_pTimerB = new TimerEx(64 * SIP_TimerConstants.T1,false);
-                            m_pTimerB.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerB_Elapsed);
-                            m_pTimerB.Enabled = true;
+                            m_pTimerB = new TimerEx(m_pTimerB_Elapsed, 64 * SIP_TimerConstants.T1,false);
+                            m_pTimerB.Start();
 
                             // Log
                             if(this.Stack.Logger != null){
@@ -463,9 +489,8 @@ namespace LumiSoft.Net.SIP.Stack
                             SetState(SIP_TransactionState.Trying);
 
                             // Start timer F.
-                            m_pTimerF = new TimerEx(64 * SIP_TimerConstants.T1,false);
-                            m_pTimerF.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerF_Elapsed);
-                            m_pTimerF.Enabled = true;
+                            m_pTimerF = new TimerEx(m_pTimerF_Elapsed, 64 * SIP_TimerConstants.T1,false);
+                            m_pTimerF.Start();
 
                             // Log
                             if(this.Stack.Logger != null){
@@ -487,9 +512,8 @@ namespace LumiSoft.Net.SIP.Stack
 
                             // Start timer E for unreliable transports.
                             if(!this.Flow.IsReliable){ 
-                                m_pTimerE = new TimerEx(SIP_TimerConstants.T1,false);
-                                m_pTimerE.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerE_Elapsed);
-                                m_pTimerE.Enabled = true;
+                                m_pTimerE = new TimerEx(m_pTimerE_Elapsed, SIP_TimerConstants.T1,false);
+                                m_pTimerE.Start();
 
                                 // Log
                                 if(this.Stack.Logger != null){
@@ -685,9 +709,8 @@ namespace LumiSoft.Net.SIP.Stack
                             /* RFC 6025 7.1.
                                 When the "Accepted" state is entered, timer L MUST be set to fire in 64*T1.
                             */
-                            m_pTimerM = new TimerEx(64 * SIP_TimerConstants.T1);
-                            m_pTimerM.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerM_Elapsed);
-                            m_pTimerM.Enabled = true;
+                            m_pTimerM = new TimerEx(m_pTimerM_Elapsed, 64 * SIP_TimerConstants.T1);
+                            m_pTimerM.Start();
 
                             // Log
                             if(this.Stack.Logger != null){
@@ -705,13 +728,12 @@ namespace LumiSoft.Net.SIP.Stack
                                 with a value of at least 32 seconds for unreliable transports, and a value of zero 
                                 seconds for reliable transports.
                             */
-                            m_pTimerD = new TimerEx(this.Flow.IsReliable ? 0 : 32000,false);
-                            m_pTimerD.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerD_Elapsed);
+                            m_pTimerD = new TimerEx(m_pTimerD_Elapsed, this.Flow.IsReliable ? 0 : 32000,false);
                             // Log
                             if(this.Stack.Logger != null){
                                 this.Stack.Logger.AddText(this.ID,"Transaction [branch='" + this.ID + "';method='" + this.Method + "';IsServer=false] timer D(INVITE 3xx - 6xx response retransmission wait) started, will trigger after " + m_pTimerD.Interval + ".");
                             }
-                            m_pTimerD.Enabled = true;
+                            m_pTimerD.Start();
                         }
                     }
 
@@ -735,9 +757,8 @@ namespace LumiSoft.Net.SIP.Stack
                             /* RFC 6025 7.1.
                                 When the "Accepted" state is entered, timer L MUST be set to fire in 64*T1.
                             */
-                            m_pTimerM = new TimerEx(64 * SIP_TimerConstants.T1);
-                            m_pTimerM.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerM_Elapsed);
-                            m_pTimerM.Enabled = true;
+                            m_pTimerM = new TimerEx(m_pTimerM_Elapsed, 64 * SIP_TimerConstants.T1);
+                            m_pTimerM.Start();
 
                             // Log
                             if(this.Stack.Logger != null){
@@ -755,13 +776,12 @@ namespace LumiSoft.Net.SIP.Stack
                                 with a value of at least 32 seconds for unreliable transports, and a value of zero 
                                 seconds for reliable transports.
                             */
-                            m_pTimerD = new TimerEx(this.Flow.IsReliable ? 0 : 32000,false);
-                            m_pTimerD.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerD_Elapsed);
+                            m_pTimerD = new TimerEx(m_pTimerD_Elapsed, this.Flow.IsReliable ? 0 : 32000,false);
                             // Log
                             if(this.Stack.Logger != null){
                                 this.Stack.Logger.AddText(this.ID,"Transaction [branch='" + this.ID + "';method='" + this.Method + "';IsServer=false] timer D(INVITE 3xx - 6xx response retransmission wait) started, will trigger after " + m_pTimerD.Interval + ".");
                             }
-                            m_pTimerD.Enabled = true;
+                            m_pTimerD.Start();
                         }
                     }
 
@@ -888,13 +908,12 @@ namespace LumiSoft.Net.SIP.Stack
                                 Timer K to fire in T4 seconds for unreliable transports, and zero
                                 seconds for reliable transports.
                             */
-                            m_pTimerK = new TimerEx(this.Flow.IsReliable ? 1 : SIP_TimerConstants.T4,false);
-                            m_pTimerK.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerK_Elapsed);
+                            m_pTimerK = new TimerEx(m_pTimerK_Elapsed, this.Flow.IsReliable ? 1 : SIP_TimerConstants.T4,false);
                             // Log
                             if(this.Stack.Logger != null){
                                 this.Stack.Logger.AddText(this.ID,"Transaction [branch='" + this.ID + "';method='" + this.Method + "';IsServer=false] timer K(Non-INVITE 3xx - 6xx response retransmission wait) started, will trigger after " + m_pTimerK.Interval + ".");
                             }
-                            m_pTimerK.Enabled = true;
+                            m_pTimerK.Start();
                         }
                     }
 
@@ -931,13 +950,12 @@ namespace LumiSoft.Net.SIP.Stack
                                 Timer K to fire in T4 seconds for unreliable transports, and zero
                                 seconds for reliable transports.
                             */
-                            m_pTimerK = new TimerEx(this.Flow.IsReliable ? 0 : SIP_TimerConstants.T4,false);
-                            m_pTimerK.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerK_Elapsed);
+                            m_pTimerK = new TimerEx(m_pTimerK_Elapsed, this.Flow.IsReliable ? 0 : SIP_TimerConstants.T4,false);
                             // Log
                             if(this.Stack.Logger != null){
                                 this.Stack.Logger.AddText(this.ID,"Transaction [branch='" + this.ID + "';method='" + this.Method + "';IsServer=false] timer K(Non-INVITE 3xx - 6xx response retransmission wait) started, will trigger after " + m_pTimerK.Interval + ".");
                             }
-                            m_pTimerK.Enabled = true;
+                            m_pTimerK.Start();
                         }
                     }
 

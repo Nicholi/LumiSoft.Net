@@ -297,7 +297,7 @@ namespace LumiSoft.Net.Mime
 		/// <returns></returns>
 		public string ToStringData()
 		{
-			return System.Text.Encoding.Default.GetString(this.ToByteData());
+			return Helpers.GetDefaultEncoding().GetString(this.ToByteData());
 		}
 
 		#endregion

@@ -172,7 +172,13 @@ namespace LumiSoft.Net.TCP
                         #region Async sockets
 
                         else{
+#if NETSTANDARD
+                            // NOTE synchronous now
+                            var socket = m_pSocket.Accept();
+                            this.AsyncSocketAccept(socket);
+#else
                             m_pSocket.BeginAccept(new AsyncCallback(this.AsyncSocketAccept),null);
+#endif
                         }
 
                         #endregion
@@ -229,21 +235,37 @@ namespace LumiSoft.Net.TCP
             /// Is called BeginAccept has completed.
             /// </summary>
             /// <param name="ar">The result of the asynchronous operation.</param>
-            private void AsyncSocketAccept(IAsyncResult ar)
+            private void AsyncSocketAccept(
+#if NETSTANDARD
+                Socket socket
+#else
+                IAsyncResult ar
+#endif
+                )
             {
                 if(m_IsDisposed){
                     return;
                 }
 
                 try{
+#if NETSTANDARD
+                    OnConnectionAccepted(socket);
+#else
                     OnConnectionAccepted(m_pSocket.EndAccept(ar));
+#endif
                 }
                 catch(Exception x){
                     OnError(x);
                 }
 
                 try{
+#if NETSTANDARD
+                    // NOTE synchronous now
+                    var otherSocket = m_pSocket.Accept();
+                    this.AsyncSocketAccept(otherSocket);
+#else
                     m_pSocket.BeginAccept(new AsyncCallback(this.AsyncSocketAccept),null);
+#endif
                 }
                 catch(Exception x){
                     OnError(x);
@@ -384,7 +406,11 @@ namespace LumiSoft.Net.TCP
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimer_IdleTimeout_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimer_IdleTimeout_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             try{
                 foreach(T session in this.Sessions.ToArray()){
@@ -435,9 +461,8 @@ namespace LumiSoft.Net.TCP
                 StartListen();
             }));
 
-            m_pTimer_IdleTimeout = new TimerEx(30000,true);
-            m_pTimer_IdleTimeout.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimer_IdleTimeout_Elapsed);
-            m_pTimer_IdleTimeout.Enabled = true;
+            m_pTimer_IdleTimeout = new TimerEx(m_pTimer_IdleTimeout_Elapsed, 30000, true);
+            m_pTimer_IdleTimeout.Start();
 
             OnStarted();
         }
@@ -470,7 +495,7 @@ namespace LumiSoft.Net.TCP
             // Dispose all old binds.
             foreach(ListeningPoint listeningPoint in m_pListeningPoints.ToArray()){
                 try{
-                    listeningPoint.Socket.Close();
+                    listeningPoint.Socket.CloseOrDispose();
                 }
                 catch(Exception x){
                     OnError(x);
@@ -542,7 +567,7 @@ namespace LumiSoft.Net.TCP
                 // Dispose all old binds.
                 foreach(ListeningPoint listeningPoint in m_pListeningPoints.ToArray()){
                     try{
-                        listeningPoint.Socket.Close();
+                        listeningPoint.Socket.CloseOrDispose();
                     }
                     catch(Exception x){
                         OnError(x);
@@ -729,14 +754,14 @@ namespace LumiSoft.Net.TCP
                 List<IPEndPoint> retVal = new List<IPEndPoint>();
                 foreach(IPBindInfo bind in this.Bindings){
                     if(bind.IP.Equals(IPAddress.Any)){
-                        foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+                        foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                             if(ip.AddressFamily == AddressFamily.InterNetwork && !retVal.Contains(new IPEndPoint(ip,bind.Port))){
                                 retVal.Add(new IPEndPoint(ip,bind.Port));
                             }
                         }
                     }
                     else if(bind.IP.Equals(IPAddress.IPv6Any)){
-                        foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+                        foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                             if(ip.AddressFamily == AddressFamily.InterNetworkV6 && !retVal.Contains(new IPEndPoint(ip,bind.Port))){
                                 retVal.Add(new IPEndPoint(ip,bind.Port));
                             }
@@ -1008,7 +1033,7 @@ namespace LumiSoft.Net.TCP
         private void OnError(Exception x)
         {
             if(this.Error != null){
-                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace()));
+                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace(x, true)));
             }
         }
 

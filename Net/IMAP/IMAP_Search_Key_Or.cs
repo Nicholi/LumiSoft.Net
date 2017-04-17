@@ -51,7 +51,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"OR",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"OR", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'OR' key.");
             }
 

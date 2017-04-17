@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 using LumiSoft.Net.IO;
+#if NETSTANDARD
+using System.Reflection;
+#endif
 
 namespace LumiSoft.Net.MIME
 {
@@ -30,7 +32,10 @@ namespace LumiSoft.Net.MIME
             m_pBodyTypes.Add("multipart/parallel",typeof(MIME_b_MultipartParallel));
             m_pBodyTypes.Add("multipart/related",typeof(MIME_b_MultipartRelated));
             m_pBodyTypes.Add("multipart/report",typeof(MIME_b_MultipartReport));
+// TODO check back after netstandard 2.0
+#if !NETSTANDARD
             m_pBodyTypes.Add("multipart/signed",typeof(MIME_b_MultipartSigned));
+#endif
         }
 
 

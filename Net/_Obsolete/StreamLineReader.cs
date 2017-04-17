@@ -95,7 +95,7 @@ namespace LumiSoft.Net
 			byte[] line = ReadLine();
 			if(line != null){
 				if(m_Encoding == null || m_Encoding == ""){
-					return System.Text.Encoding.Default.GetString(line);					
+					return Helpers.GetDefaultEncoding().GetString(line);					
 				}
 				else{
 					return System.Text.Encoding.GetEncoding(m_Encoding).GetString(line);

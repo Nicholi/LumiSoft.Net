@@ -161,6 +161,10 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>signerCert</b> is null reference.</exception>
         public static Mail_Message Create_MultipartSigned(X509Certificate2 signerCert,Mail_t_Mailbox from,Mail_t_Address[] to,Mail_t_Address[] cc,Mail_t_Address[] bcc,string subject,string text,string html,Mail_t_Attachment[] attachments)
         {
+// TODO check back after netstandard 2.0
+#if NETSTANDARD
+            throw new NotImplementedException("MIME_b_MultipartSigned is unsupported");
+#else
             if(signerCert == null){
                 throw new ArgumentNullException("signerCert");
             }
@@ -272,6 +276,7 @@ namespace LumiSoft.Net.Mail
             }
 
             return msg;
+#endif
         }
 
         #endregion
@@ -471,10 +476,10 @@ namespace LumiSoft.Net.Mail
                     // ContentDisposition parsing failed.
                 }
 
-                if(disposition != null && string.Equals(disposition.DispositionType,"attachment",StringComparison.InvariantCultureIgnoreCase)){
+                if(disposition != null && string.Equals(disposition.DispositionType,"attachment", Helpers.GetDefaultIgnoreCaseComparison())){
                     retVal.Add(entity);
                 }
-                else if(disposition != null && string.Equals(disposition.DispositionType,"inline",StringComparison.InvariantCultureIgnoreCase)){
+                else if(disposition != null && string.Equals(disposition.DispositionType,"inline", Helpers.GetDefaultIgnoreCaseComparison())){
                     if(includeInline){
                         retVal.Add(entity);
                     }

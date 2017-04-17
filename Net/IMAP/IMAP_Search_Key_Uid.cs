@@ -46,7 +46,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"UID",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"UID", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'UID' key.");
             }
             r.ReadToFirstChar();

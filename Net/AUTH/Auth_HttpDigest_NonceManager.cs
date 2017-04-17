@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Timers;
 
 namespace LumiSoft.Net.AUTH
 {
@@ -57,7 +56,7 @@ namespace LumiSoft.Net.AUTH
 
         private List<NonceEntry> m_pNonces    = null;
         private int              m_ExpireTime = 30;
-        private Timer            m_pTimer     = null;
+        private TimerEx          m_pTimer     = null;
 
         /// <summary>
         /// Default constructor.
@@ -66,9 +65,8 @@ namespace LumiSoft.Net.AUTH
         {
             m_pNonces = new List<NonceEntry>();
 
-            m_pTimer = new Timer(15000);
-            m_pTimer.Elapsed += new ElapsedEventHandler(m_pTimer_Elapsed);
-            m_pTimer.Enabled = true;
+            m_pTimer = new TimerEx(m_pTimer_Elapsed, 15000);
+            m_pTimer.Start();
         }
 
         #region method Dispose
@@ -94,7 +92,11 @@ namespace LumiSoft.Net.AUTH
 
         #region method m_pTimer_Elapsed
 
-        private void m_pTimer_Elapsed(object sender,ElapsedEventArgs e)
+        private void m_pTimer_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             RemoveExpiredNonces();
         }

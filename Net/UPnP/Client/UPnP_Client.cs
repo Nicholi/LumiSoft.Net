@@ -158,7 +158,7 @@ namespace LumiSoft.Net.UPnP.Client
                         string[] responseLines = Encoding.UTF8.GetString(buffer,0,countReceived).Split('\n');                    
                         foreach(string responseLine in responseLines){
                             string[] name_value = responseLine.Split(new char[]{':'},2);
-                            if(string.Equals(name_value[0],"location",StringComparison.InvariantCultureIgnoreCase)){
+                            if(string.Equals(name_value[0],"location", Helpers.GetDefaultIgnoreCaseComparison())){
                                 deviceLocations.Add(name_value[1].Trim());
                             }
                         }
@@ -220,7 +220,7 @@ namespace LumiSoft.Net.UPnP.Client
                         string[] responseLines = Encoding.UTF8.GetString(buffer,0,countReceived).Split('\n');                    
                         foreach(string responseLine in responseLines){
                             string[] name_value = responseLine.Split(new char[]{':'},2);
-                            if(string.Equals(name_value[0],"location",StringComparison.InvariantCultureIgnoreCase)){
+                            if(string.Equals(name_value[0],"location", Helpers.GetDefaultIgnoreCaseComparison())){
                                 deviceLocations.Add(name_value[1].Trim());
                             }
                         }

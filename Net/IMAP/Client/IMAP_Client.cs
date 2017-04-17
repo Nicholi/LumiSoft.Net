@@ -859,7 +859,7 @@ namespace LumiSoft.Net.IMAP.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -8933,7 +8933,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             // OK,NO,BAD,PREAUTH,BYE
 
-                            if(word.Equals("OK",StringComparison.InvariantCultureIgnoreCase)){
+                            if(word.Equals("OK", Helpers.GetDefaultIgnoreCaseComparison())){
                                 IMAP_r_u_ServerStatus statusResponse = IMAP_r_u_ServerStatus.Parse(responseLine);
                                 m_pResponse = statusResponse;
 
@@ -8975,22 +8975,22 @@ namespace LumiSoft.Net.IMAP.Client
 
                                 m_pImapClient.OnUntaggedStatusResponse((IMAP_r_u)m_pResponse);
                             }
-                            else if(word.Equals("NO",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("NO", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_ServerStatus.Parse(responseLine);
 
                                 m_pImapClient.OnUntaggedStatusResponse((IMAP_r_u)m_pResponse);
                             }
-                            else if(word.Equals("BAD",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("BAD", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_ServerStatus.Parse(responseLine);
 
                                 m_pImapClient.OnUntaggedStatusResponse((IMAP_r_u)m_pResponse);
                             }
-                            else if(word.Equals("PREAUTH",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("PREAUTH", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_ServerStatus.Parse(responseLine);
 
                                 m_pImapClient.OnUntaggedStatusResponse((IMAP_r_u)m_pResponse);
                             }
-                            else if(word.Equals("BYE",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("BYE", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_ServerStatus.Parse(responseLine);
 
                                 m_pImapClient.OnUntaggedStatusResponse((IMAP_r_u)m_pResponse);
@@ -9004,7 +9004,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region CAPABILITY
 
-                            else if(word.Equals("CAPABILITY",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("CAPABILITY", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Capability.Parse(responseLine); 
                                
                                 // Cache IMAP server capabilities.
@@ -9016,7 +9016,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region LIST
 
-                            else if(word.Equals("LIST",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("LIST", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_List.Parse(responseLine);
                             }
 
@@ -9024,7 +9024,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region LSUB
 
-                            else if(word.Equals("LSUB",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("LSUB", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_LSub.Parse(responseLine);
                             }
 
@@ -9032,7 +9032,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region STATUS
 
-                            else if(word.Equals("STATUS",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("STATUS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Status.Parse(responseLine);
                             }
 
@@ -9040,7 +9040,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region SEARCH
 
-                            else if(word.Equals("SEARCH",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("SEARCH", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Search.Parse(responseLine);
                             }
 
@@ -9048,7 +9048,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region FLAGS
 
-                            else if(word.Equals("FLAGS",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("FLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Flags.Parse(responseLine);
 
                                 if(m_pImapClient.m_pSelectedFolder != null){
@@ -9064,14 +9064,14 @@ namespace LumiSoft.Net.IMAP.Client
 
                             // EXISTS,RECENT
 
-                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXISTS",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXISTS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Exists.Parse(responseLine);
 
                                 if(m_pImapClient.m_pSelectedFolder != null){
                                     m_pImapClient.m_pSelectedFolder.SetMessagesCount(((IMAP_r_u_Exists)m_pResponse).MessageCount);
                                 }
                             }
-                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("RECENT",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("RECENT", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Recent.Parse(responseLine);
 
                                 if(m_pImapClient.m_pSelectedFolder != null){
@@ -9085,11 +9085,11 @@ namespace LumiSoft.Net.IMAP.Client
 
                             // EXPUNGE,FETCH
 
-                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXPUNGE",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXPUNGE", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Expunge.Parse(responseLine);
                                 m_pImapClient.OnMessageExpunged((IMAP_r_u_Expunge)m_pResponse);
                             }
-                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("FETCH",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(Net_Utils.IsInteger(word) && parts[2].Equals("FETCH", Helpers.GetDefaultIgnoreCaseComparison())){
                                 // FETCH parsing may complete asynchornously, the method FetchParsingCompleted is called when parsing has completed.
 
                                 IMAP_r_u_Fetch fetch = new IMAP_r_u_Fetch(1);                                
@@ -9104,13 +9104,13 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region Untagged acl realted. RFC 4314.
 
-                            else if(word.Equals("ACL",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("ACL", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Acl.Parse(responseLine);
                             }
-                            else if(word.Equals("LISTRIGHTS",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("LISTRIGHTS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_ListRights.Parse(responseLine);
                             }
-                            else if(word.Equals("MYRIGHTS",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("MYRIGHTS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_MyRights.Parse(responseLine);
                             }
 
@@ -9118,10 +9118,10 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region Untagged quota related. RFC 2087.
 
-                            else if(word.Equals("QUOTA",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("QUOTA", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Quota.Parse(responseLine);
                             }
-                            else if(word.Equals("QUOTAROOT",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("QUOTAROOT", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_QuotaRoot.Parse(responseLine);
                             }
 
@@ -9129,7 +9129,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region Untagged namespace related. RFC 2342.
 
-                            else if(word.Equals("NAMESPACE",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("NAMESPACE", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Namespace.Parse(responseLine);
                             }
 
@@ -9137,7 +9137,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                             #region Untagged enable related. RFC 5161.
 
-                            else if(word.Equals("ENABLED",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(word.Equals("ENABLED", Helpers.GetDefaultIgnoreCaseComparison())){
                                 m_pResponse = IMAP_r_u_Enable.Parse(responseLine);
                             }
 
@@ -9815,7 +9815,7 @@ namespace LumiSoft.Net.IMAP.Client
             }
             else{
                 foreach(string c in m_pCapabilities){
-                    if(string.Equals(c,capability,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(c,capability, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
                 }
@@ -10115,41 +10115,41 @@ namespace LumiSoft.Net.IMAP.Client
 
                     // OK,NO,BAD,PREAUTH,BYE
 
-                    if(word.Equals("OK",StringComparison.InvariantCultureIgnoreCase)){
+                    if(word.Equals("OK", Helpers.GetDefaultIgnoreCaseComparison())){
                         IMAP_r_u_ServerStatus response = IMAP_r_u_ServerStatus.Parse(responseLine);
 
                         // Process optional response-codes(7.2). ALERT,BADCHARSET,CAPABILITY,PARSE,PERMANENTFLAGS,READ-ONLY,
                         // READ-WRITE,TRYCREATE,UIDNEXT,UIDVALIDITY,UNSEEN
 
                         if(!string.IsNullOrEmpty(response.OptionalResponseCode)){
-                            if(response.OptionalResponseCode.Equals("PERMANENTFLAGS",StringComparison.InvariantCultureIgnoreCase)){
+                            if(response.OptionalResponseCode.Equals("PERMANENTFLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     StringReader r = new StringReader(response.OptionalResponseArgs);
 
                                     folderInfo.SetPermanentFlags(r.ReadParenthesized().Split(' '));
                                 }
                             }
-                            else if(response.OptionalResponseCode.Equals("READ-ONLY",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(response.OptionalResponseCode.Equals("READ-ONLY", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     folderInfo.SetReadOnly(true);
                                 }
                             }
-                            else if(response.OptionalResponseCode.Equals("READ-WRITE",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(response.OptionalResponseCode.Equals("READ-WRITE", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     folderInfo.SetReadOnly(true);
                                 }
                             }
-                            else if(response.OptionalResponseCode.Equals("UIDNEXT",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(response.OptionalResponseCode.Equals("UIDNEXT", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     folderInfo.SetUidNext(Convert.ToInt64(response.OptionalResponseArgs));
                                 }
                             }
-                            else if(response.OptionalResponseCode.Equals("UIDVALIDITY",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(response.OptionalResponseCode.Equals("UIDVALIDITY", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     folderInfo.SetUidValidity(Convert.ToInt64(response.OptionalResponseArgs));
                                 }
                             }
-                            else if(response.OptionalResponseCode.Equals("UNSEEN",StringComparison.InvariantCultureIgnoreCase)){
+                            else if(response.OptionalResponseCode.Equals("UNSEEN", Helpers.GetDefaultIgnoreCaseComparison())){
                                 if(folderInfo != null){
                                     folderInfo.SetFirstUnseen(Convert.ToInt32(response.OptionalResponseArgs));
                                 }
@@ -10159,16 +10159,16 @@ namespace LumiSoft.Net.IMAP.Client
 
                         OnUntaggedStatusResponse(response);
                     }
-                    else if(word.Equals("NO",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("NO", Helpers.GetDefaultIgnoreCaseComparison())){
                         OnUntaggedStatusResponse(IMAP_r_u_ServerStatus.Parse(responseLine));
                     }
-                    else if(word.Equals("BAD",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("BAD", Helpers.GetDefaultIgnoreCaseComparison())){
                         OnUntaggedStatusResponse(IMAP_r_u_ServerStatus.Parse(responseLine));
                     }
-                    else if(word.Equals("PREAUTH",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("PREAUTH", Helpers.GetDefaultIgnoreCaseComparison())){
                         OnUntaggedStatusResponse(IMAP_r_u_ServerStatus.Parse(responseLine));
                     }
-                    else if(word.Equals("BYE",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("BYE", Helpers.GetDefaultIgnoreCaseComparison())){
                         OnUntaggedStatusResponse(IMAP_r_u_ServerStatus.Parse(responseLine));
                     }
 
@@ -10180,7 +10180,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region CAPABILITY
 
-                    else if(word.Equals("CAPABILITY",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("CAPABILITY", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(capability != null){
                             capability.Add(IMAP_r_u_Capability.Parse(responseLine));
                         }
@@ -10190,7 +10190,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region LIST
 
-                    else if(word.Equals("LIST",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("LIST", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(list != null){
                             list.Add(IMAP_r_u_List.Parse(responseLine));
                         }
@@ -10200,7 +10200,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region LSUB
 
-                    else if(word.Equals("LSUB",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("LSUB", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(lsub != null){
                             lsub.Add(IMAP_r_u_LSub.Parse(responseLine));
                         }
@@ -10210,7 +10210,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region STATUS
 
-                    else if(word.Equals("STATUS",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("STATUS", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(status != null){
                             status.Add(IMAP_r_u_Status.Parse(responseLine));
                         }
@@ -10220,7 +10220,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region SEARCH
 
-                    else if(word.Equals("SEARCH",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("SEARCH", Helpers.GetDefaultIgnoreCaseComparison())){
                         /* RFC 3501 7.2.5.  SEARCH Response
                             Contents:   zero or more numbers
 
@@ -10246,7 +10246,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region FLAGS
 
-                    else if(word.Equals("FLAGS",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("FLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                         /* RFC 3501 7.2.6. FLAGS Response.                         
                             Contents:   flag parenthesized list
 
@@ -10280,12 +10280,12 @@ namespace LumiSoft.Net.IMAP.Client
                     // Update local cached value.
                     // OnMailboxSize
 
-                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXISTS",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXISTS", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(folderInfo != null){
                             folderInfo.SetMessagesCount(Convert.ToInt32(word));
                         }
                     }
-                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("RECENT",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("RECENT", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(folderInfo != null){
                             folderInfo.SetRecentMessagesCount(Convert.ToInt32(word));
                         }
@@ -10297,10 +10297,10 @@ namespace LumiSoft.Net.IMAP.Client
 
                     // EXPUNGE,FETCH
 
-                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXPUNGE",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("EXPUNGE", Helpers.GetDefaultIgnoreCaseComparison())){
                         OnMessageExpunged(IMAP_r_u_Expunge.Parse(responseLine));
                     }
-                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("FETCH",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(Net_Utils.IsInteger(word) && parts[2].Equals("FETCH", Helpers.GetDefaultIgnoreCaseComparison())){
                         // User din't provide us FETCH handler, make dummy one which eats up all fetch responses.
                         if(fetchHandler == null){
                             fetchHandler = new IMAP_Client_FetchHandler();
@@ -10314,17 +10314,17 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region Untagged acl realted. RFC 4314.
 
-                    else if(word.Equals("ACL",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("ACL", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(acl != null){
                             acl.Add(IMAP_r_u_Acl.Parse(responseLine));
                         }
                     }
-                    else if(word.Equals("LISTRIGHTS",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("LISTRIGHTS", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(listRights != null){
                             listRights.Add(IMAP_r_u_ListRights.Parse(responseLine));
                         }
                     }
-                    else if(word.Equals("MYRIGHTS",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("MYRIGHTS", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(myRights != null){
                             myRights.Add(IMAP_Response_MyRights.Parse(responseLine));
                         }
@@ -10334,12 +10334,12 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region Untagged quota related. RFC 2087.
 
-                    else if(word.Equals("QUOTA",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("QUOTA", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(quota != null){
                             quota.Add(IMAP_r_u_Quota.Parse(responseLine));
                         }
                     }
-                    else if(word.Equals("QUOTAROOT",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("QUOTAROOT", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(quotaRoot != null){
                             quotaRoot.Add(IMAP_r_u_QuotaRoot.Parse(responseLine));
                         }
@@ -10349,7 +10349,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region Untagged namespace related. RFC 2342.
 
-                    else if(word.Equals("NAMESPACE",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("NAMESPACE", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(nspace != null){
                             nspace.Add(IMAP_r_u_Namespace.Parse(responseLine));
                         }
@@ -10359,7 +10359,7 @@ namespace LumiSoft.Net.IMAP.Client
 
                     #region Untagged enable related. RFC 5161.
 
-                    else if(word.Equals("ENABLED",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(word.Equals("ENABLED", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(enable != null){
                             enable.Add(IMAP_r_u_Enable.Parse(responseLine));
                         }
@@ -10433,7 +10433,7 @@ namespace LumiSoft.Net.IMAP.Client
                     retVal.AddRange(((IMAP_r_u_Search)e.Value).Values);
                 }
             });
-            if(!response.ResponseCode.Equals("OK",StringComparison.InvariantCultureIgnoreCase)){
+            if(!response.ResponseCode.Equals("OK", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new IMAP_ClientException(response.ResponseCode,response.ResponseText);
             }
            
@@ -10525,7 +10525,7 @@ namespace LumiSoft.Net.IMAP.Client
             SendCommand(command.ToString());
 
             IMAP_r_ServerStatus response = ReadResponse(null,null,null,null,null,null,null,null,null,null,null,null,handler,null);
-            if(!response.ResponseCode.Equals("OK",StringComparison.InvariantCultureIgnoreCase)){
+            if(!response.ResponseCode.Equals("OK", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new IMAP_ClientException(response.ResponseCode,response.ResponseText);
             }
         }
@@ -11202,7 +11202,7 @@ namespace LumiSoft.Net.IMAP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;

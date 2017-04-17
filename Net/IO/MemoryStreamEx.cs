@@ -55,7 +55,7 @@ namespace LumiSoft.Net.IO
 
             m_IsDisposed = true;
             if(m_pStream != null){
-                m_pStream.Close();
+                m_pStream.CloseOrDispose();
             }
             m_pStream = null;
 
@@ -173,7 +173,7 @@ namespace LumiSoft.Net.IO
 
                 m_pStream.Position = 0;
                 Net_Utils.StreamCopy(m_pStream,fs,8000);
-                m_pStream.Close();
+                m_pStream.CloseOrDispose();
                 m_pStream = fs;
             }
  

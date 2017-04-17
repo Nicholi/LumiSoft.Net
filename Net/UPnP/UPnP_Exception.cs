@@ -54,12 +54,12 @@ namespace LumiSoft.Net.UPnP
                     XmlNode currentNode = queue[0];
                     queue.RemoveAt(0);
                
-                    if(string.Equals("UPnPError",currentNode.Name,StringComparison.InvariantCultureIgnoreCase)){                        
+                    if(string.Equals("UPnPError",currentNode.Name, Helpers.GetDefaultIgnoreCaseComparison())){                        
                         foreach(XmlNode node in currentNode.ChildNodes){                        
-                            if(string.Equals("errorCode",node.Name,StringComparison.InvariantCultureIgnoreCase)){
+                            if(string.Equals("errorCode",node.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                                 errorCode = Convert.ToInt32(node.InnerText);
                             }
-                            else if(string.Equals("errorDescription",node.Name,StringComparison.InvariantCultureIgnoreCase)){
+                            else if(string.Equals("errorDescription",node.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                                 errorText = node.InnerText;
                             }
                         }

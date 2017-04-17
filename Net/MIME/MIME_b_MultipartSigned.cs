@@ -1,4 +1,6 @@
-﻿using System;
+﻿// TODO check back after netstandard 2.0
+#if !NETSTANDARD
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -211,3 +213,4 @@ namespace LumiSoft.Net.MIME
         #endregion
     }
 }
+#endif

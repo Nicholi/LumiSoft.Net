@@ -454,7 +454,7 @@ namespace LumiSoft.Net.Media
                 using(BinaryReader waveFile = new BinaryReader(stream)){
                     WavReader wavReader = new WavReader(waveFile);
 
-                    if(!string.Equals(wavReader.Read_ChunkID(),"riff",StringComparison.InvariantCultureIgnoreCase)){
+                    if(!string.Equals(wavReader.Read_ChunkID(),"riff", Helpers.GetDefaultIgnoreCaseComparison())){
                         throw new ArgumentNullException("Invalid wave file, RIFF header missing.");
                     }
                     RIFF_Chunk riff = wavReader.Read_RIFF();
@@ -478,7 +478,7 @@ namespace LumiSoft.Net.Media
                                     break;
                                 }
                                 // Wave data chunk.
-                                else if(string.Equals(chunkID,"data",StringComparison.InvariantCultureIgnoreCase)){
+                                else if(string.Equals(chunkID,"data", Helpers.GetDefaultIgnoreCaseComparison())){
                                     data_Chunk data = wavReader.Read_data();
 
                                     int    totalReaded = 0;

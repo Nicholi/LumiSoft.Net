@@ -68,7 +68,7 @@ namespace LumiSoft.Net.FTP.Client
             public void Dispose()
             {
                 if(m_pSocket != null){
-                    m_pSocket.Close();
+                    m_pSocket.CloseOrDispose();
                     m_pSocket = null;
                 }
                 m_pOwner = null;
@@ -286,7 +286,7 @@ namespace LumiSoft.Net.FTP.Client
             public void CleanUpSocket()
             {
                 if(m_pSocket != null){
-                    m_pSocket.Close();
+                    m_pSocket.CloseOrDispose();
                 }
 
                 // We can't reuse socket, so we need to recreate new one for each transfer.
@@ -1344,7 +1344,7 @@ namespace LumiSoft.Net.FTP.Client
         {           
             string[] response = null;
             // We will try all IP addresses assigned to this machine, the first one that the remote machine likes will be chosen.
-            foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+            foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                 if(ip.AddressFamily == m_pDataConnection.LocalEndPoint.AddressFamily){
                     WriteLine("PORT " + ip.ToString().Replace(".",",") + "," + (m_pDataConnection.LocalEndPoint.Port >> 8) + "," + (m_pDataConnection.LocalEndPoint.Port & 0xFF));
 

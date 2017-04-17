@@ -422,12 +422,12 @@ namespace LumiSoft.Net.STUN.Message
             }
             // USERNAME
             else if(type == AttributeType.Username){
-                m_UserName = Encoding.Default.GetString(data,offset,length);
+                m_UserName = Helpers.GetDefaultEncoding().GetString(data,offset,length);
                 offset += length;
             }
             // PASSWORD
             else if(type == AttributeType.Password){
-                m_Password = Encoding.Default.GetString(data,offset,length);
+                m_Password = Helpers.GetDefaultEncoding().GetString(data,offset,length);
                 offset += length;
             }
             // MESSAGE-INTEGRITY
@@ -448,7 +448,7 @@ namespace LumiSoft.Net.STUN.Message
 
                 int errorCode = (data[offset + 2] & 0x7) * 100 + (data[offset + 3] & 0xFF);
 
-                m_pErrorCode = new STUN_t_ErrorCode(errorCode,Encoding.Default.GetString(data,offset + 4,length - 4));
+                m_pErrorCode = new STUN_t_ErrorCode(errorCode,Helpers.GetDefaultEncoding().GetString(data,offset + 4,length - 4));
                 offset += length;
             }
             // UNKNOWN-ATTRIBUTES
@@ -463,7 +463,7 @@ namespace LumiSoft.Net.STUN.Message
             // XorOnly
             // ServerName
             else if(type == AttributeType.ServerName){
-                m_ServerName = Encoding.Default.GetString(data,offset,length);
+                m_ServerName = Helpers.GetDefaultEncoding().GetString(data,offset,length);
                 offset += length;
             }
             // Unknown

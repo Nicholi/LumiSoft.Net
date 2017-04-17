@@ -1,8 +1,11 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+#if !NETSTANDARD
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 
 namespace LumiSoft.Net.DNS.Client
 {
@@ -53,7 +56,7 @@ namespace LumiSoft.Net.DNS.Client
     [Obsolete("Use DNS_Client.Cache instead.")]
 	public class DnsCache
 	{
-		private static Hashtable m_pCache    = null;
+		private static Dictionary<String, DnsCacheEntry> m_pCache    = null;
 		private static long      m_CacheTime = 10000;
 
 		/// <summary>
@@ -61,7 +64,7 @@ namespace LumiSoft.Net.DNS.Client
 		/// </summary>
 		static DnsCache()
 		{
-			m_pCache = new Hashtable();
+			m_pCache = new Dictionary<String, DnsCacheEntry>();
 		}
 
 
@@ -76,7 +79,7 @@ namespace LumiSoft.Net.DNS.Client
 		public static DnsServerResponse GetFromCache(string qname,int qtype)
 		{
 			try{
-				if(m_pCache.Contains(qname + qtype)){
+				if(m_pCache.ContainsKey(qname + qtype)){
 					DnsCacheEntry entry = (DnsCacheEntry)m_pCache[qname + qtype];
 
 					// If cache object isn't expired
@@ -110,7 +113,7 @@ namespace LumiSoft.Net.DNS.Client
 			try{
 				lock(m_pCache){
 					// Remove old cache entry, if any.
-					if(m_pCache.Contains(qname + qtype)){
+					if(m_pCache.ContainsKey(qname + qtype)){
 						m_pCache.Remove(qname + qtype);
 					}
 					m_pCache.Add(qname + qtype,new DnsCacheEntry(answers,DateTime.Now));
@@ -145,6 +148,10 @@ namespace LumiSoft.Net.DNS.Client
 		/// <returns>Return serialized cache.</returns>
 		public static byte[] SerializeCache()
 		{
+#if NETSTANDARD
+            // TODO check back in netstandard 2.0
+            throw new NotImplementedException("NetStandard does not support BinaryFormatter");
+#else
             lock(m_pCache){
 			    MemoryStream retVal = new MemoryStream();
 
@@ -153,6 +160,7 @@ namespace LumiSoft.Net.DNS.Client
 
 			    return retVal.ToArray();
             }
+#endif
 		}
 
 		#endregion
@@ -165,12 +173,17 @@ namespace LumiSoft.Net.DNS.Client
 		/// <param name="cacheData">This value must be DnsCache.SerializeCache() method value.</param>
 		public static void DeSerializeCache(byte[] cacheData)
 		{
+#if NETSTANDARD
+            // TODO check back in netstandard 2.0
+            throw new NotImplementedException("NetStandard does not support BinaryFormatter");
+#else
             lock(m_pCache){
 			    MemoryStream retVal = new MemoryStream(cacheData);
 
 			    BinaryFormatter b = new BinaryFormatter();
-			    m_pCache = (Hashtable)b.Deserialize(retVal);
+			    m_pCache = (Dictionary<String, DnsCacheEntry>)b.Deserialize(retVal);
             }
+#endif
 		}
 
 		#endregion

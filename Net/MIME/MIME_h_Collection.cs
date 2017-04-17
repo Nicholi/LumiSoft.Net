@@ -214,7 +214,7 @@ namespace LumiSoft.Net.MIME
             }
 
             foreach(MIME_h field in m_pFields.ToArray()){
-                if(string.Equals(name,field.Name,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(name,field.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                     return field;
                 }
             }

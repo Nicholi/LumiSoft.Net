@@ -261,10 +261,10 @@ namespace LumiSoft.Net.Mime.vCard
                 // Encoding specified, decode data.
                 if(encoding != null){
                     if(encoding == "quoted-printable"){
-                        data = System.Text.Encoding.Default.GetString(MIME_Utils.QuotedPrintableDecode(System.Text.Encoding.Default.GetBytes(data)));
+                        data = Helpers.GetDefaultEncoding().GetString(MIME_Utils.QuotedPrintableDecode(Helpers.GetDefaultEncoding().GetBytes(data)));
                     }
                     else if(encoding == "b" || encoding == "base64"){
-                        data = System.Text.Encoding.Default.GetString(Net_Utils.FromBase64(System.Text.Encoding.Default.GetBytes(data)));
+                        data = Helpers.GetDefaultEncoding().GetString(Net_Utils.FromBase64(Helpers.GetDefaultEncoding().GetBytes(data)));
                     }
                     else{
                         throw new Exception("Unknown data encoding '" + encoding + "' !");
@@ -272,7 +272,7 @@ namespace LumiSoft.Net.Mime.vCard
                 }
                 // Charset specified, convert data to specified charset.
                 if(charset != null){
-                    data = System.Text.Encoding.GetEncoding(charset).GetString(System.Text.Encoding.Default.GetBytes(data));
+                    data = System.Text.Encoding.GetEncoding(charset).GetString(Helpers.GetDefaultEncoding().GetBytes(data));
                 }
 
                 // FIX ME: this must be done with structured fields

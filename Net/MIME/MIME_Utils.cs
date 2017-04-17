@@ -473,7 +473,7 @@ namespace LumiSoft.Net.MIME
 				lineData = r.ReadLine();
 			}
 
-			return System.Text.Encoding.Default.GetString(msHeaders.ToArray());
+			return Helpers.GetDefaultEncoding().GetString(msHeaders.ToArray());
 		}
 
 		#endregion
@@ -526,7 +526,7 @@ namespace LumiSoft.Net.MIME
 					<TAB or SP>aaaaa<CRLF>
 			*/
 
-			using(TextReader r = new StreamReader(new MemoryStream(System.Text.Encoding.Default.GetBytes(headers)))){
+			using(TextReader r = new StreamReader(new MemoryStream(Helpers.GetDefaultEncoding().GetBytes(headers)))){
 				string line = r.ReadLine();
 				while(line != null){
 					// Find line where field begins

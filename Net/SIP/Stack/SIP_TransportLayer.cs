@@ -50,10 +50,8 @@ namespace LumiSoft.Net.SIP.Stack
 
                 m_pFlows = new Dictionary<string,SIP_Flow>();
 
-                m_pTimeoutTimer = new TimerEx(15000);
-                m_pTimeoutTimer.AutoReset = true;
-                m_pTimeoutTimer.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimeoutTimer_Elapsed);
-                m_pTimeoutTimer.Enabled = true;
+                m_pTimeoutTimer = new TimerEx(m_pTimeoutTimer_Elapsed, 15000, true);
+                m_pTimeoutTimer.Start();
             }
 
             #region method Dispose
@@ -87,7 +85,11 @@ namespace LumiSoft.Net.SIP.Stack
 
             #region method m_pTimeoutTimer_Elapsed
 
-            private void m_pTimeoutTimer_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+            private void m_pTimeoutTimer_Elapsed(object sender
+#if !NETSTANDARD
+                , System.Timers.ElapsedEventArgs e
+#endif
+            )
             {
                 lock(m_pLock){
                     if(m_IsDisposed){
@@ -749,11 +751,11 @@ namespace LumiSoft.Net.SIP.Stack
             }
 
             if(localEP == null){
-                if(string.Equals(transport,SIP_Transport.UDP,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(transport,SIP_Transport.UDP, Helpers.GetDefaultIgnoreCaseComparison())){
                     // Get load-balanched local endpoint.
                     localEP = m_pUdpServer.GetLocalEndPoint(remoteEP);
                 }
-                else if(string.Equals(transport,SIP_Transport.TCP,StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(transport,SIP_Transport.TCP, Helpers.GetDefaultIgnoreCaseComparison())){
                     // Get load-balanched local IP for TCP and create random port.
                     if(remoteEP.AddressFamily == AddressFamily.InterNetwork){
                         localEP = new IPEndPoint(m_pLocalIPv4.Next(),m_pRandom.Next(10000,65000));
@@ -762,7 +764,7 @@ namespace LumiSoft.Net.SIP.Stack
                         localEP = new IPEndPoint(m_pLocalIPv4.Next(),m_pRandom.Next(10000,65000));
                     }
                 }
-                else if(string.Equals(transport,SIP_Transport.TLS,StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(transport,SIP_Transport.TLS, Helpers.GetDefaultIgnoreCaseComparison())){
                     // Get load-balanched local IP for TLS and create random port.
                     if(remoteEP.AddressFamily == AddressFamily.InterNetwork){
                         localEP = new IPEndPoint(m_pLocalIPv4.Next(),m_pRandom.Next(10000,65000));

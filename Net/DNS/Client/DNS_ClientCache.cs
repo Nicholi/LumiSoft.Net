@@ -71,8 +71,7 @@ namespace LumiSoft.Net.DNS.Client
         {
             m_pCache = new Dictionary<string,CacheEntry>();
 
-            m_pTimerTimeout = new TimerEx(60000);
-            m_pTimerTimeout.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerTimeout_Elapsed);
+            m_pTimerTimeout = new TimerEx(m_pTimerTimeout_Elapsed, 60000);
             m_pTimerTimeout.Start();
         }
 
@@ -101,7 +100,11 @@ namespace LumiSoft.Net.DNS.Client
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerTimeout_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerTimeout_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+            )
         {
             lock(m_pCache){
                 // Copy entries to new array.

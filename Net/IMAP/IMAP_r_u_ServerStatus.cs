@@ -132,7 +132,7 @@ namespace LumiSoft.Net.IMAP
         /// </summary>
         public bool IsError
         {
-            get{ return !m_ResponseCode.Equals("OK",StringComparison.InvariantCultureIgnoreCase); }
+            get{ return !m_ResponseCode.Equals("OK", Helpers.GetDefaultIgnoreCaseComparison()); }
         }
 
         #endregion

@@ -41,7 +41,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SENTBEFORE",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SENTBEFORE", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SENTBEFORE' key.");
             }
             string value = r.ReadWord();

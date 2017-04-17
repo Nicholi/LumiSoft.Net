@@ -32,7 +32,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string[] code_value = r.ReadParenthesized().Split(new char[]{' '},2);
-            if(!string.Equals("READ-WRITE",code_value[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("READ-WRITE",code_value[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid READ-WRITE response value.","r");
             }
 

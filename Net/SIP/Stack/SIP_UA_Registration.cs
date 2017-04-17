@@ -64,10 +64,8 @@ namespace LumiSoft.Net.SIP.Stack
 
             m_pContacts = new List<AbsoluteUri>();
 
-            m_pTimer = new TimerEx((m_RefreshInterval - 15) * 1000);
-            m_pTimer.AutoReset = false;
-            m_pTimer.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimer_Elapsed);
-            m_pTimer.Enabled = false;
+            m_pTimer = new TimerEx(m_pTimer_Elapsed, (m_RefreshInterval - 15) * 1000, false);
+            m_pTimer.Stop();
         }
                 
         #region method Dispose
@@ -107,7 +105,11 @@ namespace LumiSoft.Net.SIP.Stack
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimer_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimer_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {   
             if(m_pStack.State == SIP_StackState.Started){
                 BeginRegister(m_AutoRefresh);
@@ -177,7 +179,7 @@ namespace LumiSoft.Net.SIP.Stack
 
             if(m_AutoRefresh){
                 // Set registration refresh timer.
-                m_pTimer.Enabled = true;
+                m_pTimer.Start();
             }
 
             m_pRegisterSender.Dispose();
@@ -226,7 +228,7 @@ namespace LumiSoft.Net.SIP.Stack
             // Fix ME: Stack not running, try register on next step.
             // In ideal solution we need to start registering when stack starts.
             if(m_pStack.State != SIP_StackState.Started){
-                m_pTimer.Enabled = true;
+                m_pTimer.Start();
                 return;
             }
 
@@ -266,7 +268,7 @@ namespace LumiSoft.Net.SIP.Stack
             m_AutoDispose = dispose;
 
             // Stop register timer, otherwise we may get register and unregister race condition.
-            m_pTimer.Enabled = false;
+            m_pTimer.Stop();
 
             if(m_State == SIP_UA_RegistrationState.Registered){
                 /* RFC 3261 10.1 Constructing the REGISTER Request.

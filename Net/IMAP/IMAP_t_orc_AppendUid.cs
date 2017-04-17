@@ -47,7 +47,7 @@ namespace LumiSoft.Net.IMAP
             */
 
             string[] code_mailboxUid_msgUid = r.ReadParenthesized().Split(new char[]{' '},3);
-            if(!string.Equals("APPENDUID",code_mailboxUid_msgUid[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("APPENDUID",code_mailboxUid_msgUid[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid APPENDUID response value.","r");
             }
             if(code_mailboxUid_msgUid.Length != 3){

@@ -31,7 +31,7 @@ namespace LumiSoft.Net.Mime
 		{
 			parameterName = parameterName.ToLower();
 
-			Hashtable parameters = m_pHeaderField.ParseParameters();
+			var parameters = m_pHeaderField.ParseParameters();
 			if(!parameters.ContainsKey(parameterName)){
 				parameters.Add(parameterName,parameterValue);
 
@@ -55,7 +55,7 @@ namespace LumiSoft.Net.Mime
 		{
 			parameterName = parameterName.ToLower();
 
-			Hashtable parameters = m_pHeaderField.ParseParameters();
+			var parameters = m_pHeaderField.ParseParameters();
 			if(!parameters.ContainsKey(parameterName)){
 				parameters.Remove(parameterName);
 
@@ -72,7 +72,7 @@ namespace LumiSoft.Net.Mime
 		/// </summary>
 		public void Clear()
 		{
-			Hashtable parameters = m_pHeaderField.ParseParameters();
+			var parameters = m_pHeaderField.ParseParameters();
 			parameters.Clear();
 			m_pHeaderField.StoreParameters(m_pHeaderField.Value,parameters);
 		}
@@ -91,7 +91,7 @@ namespace LumiSoft.Net.Mime
 		{
 			parameterName = parameterName.ToLower();
 
-			Hashtable parameters = m_pHeaderField.ParseParameters();
+			var parameters = m_pHeaderField.ParseParameters();
 			return parameters.ContainsKey(parameterName);
 		}
 
@@ -106,10 +106,10 @@ namespace LumiSoft.Net.Mime
 		/// <returns></returns>
 		public IEnumerator GetEnumerator()
 		{
-			Hashtable parameters = m_pHeaderField.ParseParameters();
+			var parameters = m_pHeaderField.ParseParameters();
 			HeaderFieldParameter[] retVal = new HeaderFieldParameter[parameters.Count];
 			int i = 0;
-			foreach(DictionaryEntry entry in parameters){
+			foreach(var entry in parameters){
 				retVal[i] = new HeaderFieldParameter(entry.Key.ToString(),entry.Value.ToString());
 				i++;
 			}
@@ -129,7 +129,7 @@ namespace LumiSoft.Net.Mime
 			get{ 
 				parameterName = parameterName.ToLower();
 
-				Hashtable parameters = m_pHeaderField.ParseParameters();
+				var parameters = m_pHeaderField.ParseParameters();
 				if(!parameters.ContainsKey(parameterName)){
 					throw new Exception("Specified parameter '" + parameterName + "' doesn't exist !");
 				}
@@ -141,7 +141,7 @@ namespace LumiSoft.Net.Mime
 			set{
 				parameterName = parameterName.ToLower();
 
-				Hashtable parameters = m_pHeaderField.ParseParameters();
+				var parameters = m_pHeaderField.ParseParameters();
 				if(parameters.ContainsKey(parameterName)){
 					parameters[parameterName] = value;
 

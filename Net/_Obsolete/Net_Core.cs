@@ -690,7 +690,7 @@ namespace LumiSoft.Net
 								}
 								// Base64 encoded text
 								else{
-                                    retVal.Append(enc.GetString(Core.Base64Decode(Encoding.Default.GetBytes(charset_type_text[2]))));
+                                    retVal.Append(enc.GetString(Core.Base64Decode(Helpers.GetDefaultEncoding().GetBytes(charset_type_text[2]))));
 								}
 							}
 							catch{
@@ -846,7 +846,7 @@ namespace LumiSoft.Net
 				}
 			}
 
-			return System.Text.Encoding.Default.GetString(retVal.ToArray());
+			return Helpers.GetDefaultEncoding().GetString(retVal.ToArray());
 		}
 
 		#endregion
@@ -924,7 +924,7 @@ namespace LumiSoft.Net
 					// Decode block
 					else{
 						// Get encoded block
-						byte[] encodedBlock = System.Text.Encoding.Default.GetBytes(text.Substring(i + 1,endingPos - i - 1));
+						byte[] encodedBlock = Helpers.GetDefaultEncoding().GetBytes(text.Substring(i + 1,endingPos - i - 1));
 		
 						// Convert to UTF-16 char						
 						byte[] decodedData = Core.Base64DecodeEx(encodedBlock,base64Chars);
@@ -1155,7 +1155,7 @@ namespace LumiSoft.Net
 		/// <returns>Returns data as hex string.</returns>
 		public static string ToHexString(string data)
 		{
-            return Encoding.Default.GetString(ToHex(Encoding.Default.GetBytes(data)));
+            return Helpers.GetDefaultEncoding().GetString(ToHex(Helpers.GetDefaultEncoding().GetBytes(data)));
         }
 
         /// <summary>
@@ -1165,7 +1165,7 @@ namespace LumiSoft.Net
 		/// <returns>Returns data as hex string.</returns>  
 		public static string ToHexString(byte[] data)
 		{
-            return Encoding.Default.GetString(ToHex(data));
+            return Helpers.GetDefaultEncoding().GetString(ToHex(data));
         }
 
 		/// <summary>
@@ -1296,14 +1296,19 @@ namespace LumiSoft.Net
         [Obsolete("Use Net_Utils.ComputeMd5 instead of it")]
         public static string ComputeMd5(string text,bool hex)
         {
-            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();			
-			byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(text));
+            System.Security.Cryptography.MD5 md5 =
+#if NETSTANDARD
+                System.Security.Cryptography.MD5.Create();
+#else
+                new System.Security.Cryptography.MD5CryptoServiceProvider();			
+#endif
+			byte[] hash = md5.ComputeHash(Helpers.GetDefaultEncoding().GetBytes(text));
 
             if(hex){
-			    return ToHexString(System.Text.Encoding.Default.GetString(hash)).ToLower();
+			    return ToHexString(Helpers.GetDefaultEncoding().GetString(hash)).ToLower();
             }
             else{
-                return System.Text.Encoding.Default.GetString(hash);
+                return Helpers.GetDefaultEncoding().GetString(hash);
             }
         }
 

@@ -37,8 +37,14 @@ namespace LumiSoft.Net {
 		protected _MD4 () 
 		{
 			// MD4 hash length are 128 bits long
+#if !NETSTANDARD
 			HashSizeValue = 128; 
+#endif
 		}
+
+#if NETSTANDARD
+        public override int HashSize => 128;
+#endif
 
 		public static new _MD4 Create () 
 		{
@@ -48,7 +54,12 @@ namespace LumiSoft.Net {
 
 		public static new _MD4 Create (string hashName) 
 		{
-			object o = CryptoConfig.CreateFromName (hashName);
+		    object o =
+#if NETSTANDARD
+		        null;
+#else
+                CryptoConfig.CreateFromName (hashName);
+#endif
 			// in case machine.config isn't configured to use any MD4 implementation
 			if (o == null) {
 				o = new MD4Managed ();

@@ -41,7 +41,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SINCE",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SINCE", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SINCE' key.");
             }
             string value = r.ReadWord();

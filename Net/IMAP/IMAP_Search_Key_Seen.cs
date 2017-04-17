@@ -36,7 +36,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SEEN",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SEEN", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SEEN' key.");
             }
 

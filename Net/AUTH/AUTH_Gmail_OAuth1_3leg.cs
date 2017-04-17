@@ -2,9 +2,13 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using System.Web;
 using System.Net;
 using System.Security.Cryptography;
+#if NETSTANDARD
+using HttpUtility = System.Net.WebUtility;
+#else
+using System.Web;
+#endif
 
 namespace LumiSoft.Net.AUTH
 {
@@ -109,7 +113,7 @@ namespace LumiSoft.Net.AUTH
                         
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
-            authHeader.Append("Authorization: OAuth ");
+            //authHeader.Append("Authorization: OAuth ");
             authHeader.Append("oauth_version=\"1.0\", ");
             authHeader.Append("oauth_nonce=\"" + nonce + "\", ");
             authHeader.Append("oauth_timestamp=\"" + timestamp + "\", ");
@@ -119,22 +123,30 @@ namespace LumiSoft.Net.AUTH
             authHeader.Append("oauth_signature=\"" + UrlEncode(signature) + "\"");
 
             // Create web request and read response.
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
-                        string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"oauth_token",StringComparison.InvariantCultureIgnoreCase)){
-                            m_RequestToken = name_value[1];
+            Helpers.SendHttpRequest(url, "GET",
+                contentString: null,
+                additionalHeaders: new Dictionary<String, String>()
+                    {
+                        { "Authorization", "OAuth " + authHeader.ToString() }
+                    },
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            foreach (string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                            {
+                                string[] name_value = parameter.Split('=');
+                                if (string.Equals(name_value[0], "oauth_token", Helpers.GetDefaultIgnoreCaseComparison()))
+                                {
+                                    m_RequestToken = name_value[1];
+                                }
+                                else if (string.Equals(name_value[0], "oauth_token_secret", Helpers.GetDefaultIgnoreCaseComparison()))
+                                {
+                                    m_RequestTokenSecret = name_value[1];
+                                }
+                            }
                         }
-                        else if(string.Equals(name_value[0],"oauth_token_secret",StringComparison.InvariantCultureIgnoreCase)){
-                            m_RequestTokenSecret = name_value[1];
-                        }
-                    }
-                }
-            }
+                    });
         }
 
         #endregion
@@ -202,7 +214,7 @@ namespace LumiSoft.Net.AUTH
             
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
-            authHeader.Append("Authorization: OAuth ");
+            //authHeader.Append("Authorization: OAuth ");
             authHeader.Append("oauth_version=\"1.0\", ");
             authHeader.Append("oauth_nonce=\"" + nonce + "\", ");
             authHeader.Append("oauth_timestamp=\"" + timestamp + "\", ");
@@ -213,22 +225,30 @@ namespace LumiSoft.Net.AUTH
             authHeader.Append("oauth_signature=\"" + UrlEncode(signature) + "\"");
 
             // Create web request and read response.
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
-                        string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"oauth_token",StringComparison.InvariantCultureIgnoreCase)){
-                            m_AccessToken = name_value[1];
+            Helpers.SendHttpRequest(url, "GET",
+                contentString: null,
+                additionalHeaders: new Dictionary<String, String>()
+                    {
+                        { "Authorization", "OAuth " + authHeader.ToString() }
+                    },
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            foreach (string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                            {
+                                string[] name_value = parameter.Split('=');
+                                if (string.Equals(name_value[0], "oauth_token", Helpers.GetDefaultIgnoreCaseComparison()))
+                                {
+                                    m_AccessToken = name_value[1];
+                                }
+                                else if (string.Equals(name_value[0], "oauth_token_secret", Helpers.GetDefaultIgnoreCaseComparison()))
+                                {
+                                    m_AccessTokenSecret = name_value[1];
+                                }
+                            }
                         }
-                        else if(string.Equals(name_value[0],"oauth_token_secret",StringComparison.InvariantCultureIgnoreCase)){
-                            m_AccessTokenSecret = name_value[1];
-                        }
-                    }
-                }
-            }
+                    });
         }
 
         #endregion
@@ -395,7 +415,7 @@ namespace LumiSoft.Net.AUTH
 
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
-            authHeader.Append("Authorization: OAuth ");
+            //authHeader.Append("Authorization: OAuth ");
             authHeader.Append("oauth_version=\"1.0\", ");
             authHeader.Append("oauth_nonce=\"" + nonce + "\", ");
             authHeader.Append("oauth_timestamp=\"" + timestamp + "\", ");
@@ -405,19 +425,26 @@ namespace LumiSoft.Net.AUTH
             authHeader.Append("oauth_signature=\"" + UrlEncode(signature) + "\"");
 
             // Create web request and read response.
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
-                        string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"email",StringComparison.InvariantCultureIgnoreCase)){
-                            m_Email = name_value[1];
+            Helpers.SendHttpRequest(url, "GET",
+                contentString: null,
+                additionalHeaders: new Dictionary<String, String>()
+                    {
+                        { "Authorization", "OAuth " + authHeader.ToString() }
+                    },
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        using(StreamReader reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                            {
+                                string[] name_value = parameter.Split('=');
+                                if(string.Equals(name_value[0],"email", Helpers.GetDefaultIgnoreCaseComparison()))
+                                {
+                                    m_Email = name_value[1];
+                                }
+                            }
                         }
-                    }
-                }
-            }
+                    });
 
             return m_Email;
         }

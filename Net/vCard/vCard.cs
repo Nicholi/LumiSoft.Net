@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
 
 namespace LumiSoft.Net.Mime.vCard
 {
@@ -99,7 +98,7 @@ namespace LumiSoft.Net.Mime.vCard
             string line = "";
             bool hasBeginTag = false;
             using (FileStream fs = File.OpenRead(file)) {
-                TextReader r = new StreamReader(fs, System.Text.Encoding.Default);          
+                TextReader r = new StreamReader(fs, Helpers.GetDefaultEncoding());          
                 while (line != null) {
                     line = r.ReadLine();
                     if (line != null && line.ToUpper() == "BEGIN:VCARD") {
@@ -132,7 +131,7 @@ namespace LumiSoft.Net.Mime.vCard
         public void Parse(string file)
         {
             List<string> fileStrings = new List<string>();
-            string[] fileStringArray = File.ReadAllLines(file,System.Text.Encoding.Default);
+            string[] fileStringArray = File.ReadAllLines(file, Helpers.GetDefaultEncoding());
             foreach (string fileString in fileStringArray) {
                 fileStrings.Add(fileString);
             }
@@ -146,7 +145,7 @@ namespace LumiSoft.Net.Mime.vCard
         public void Parse(FileStream stream) {
             List<string> fileStrings = new List<string>();
             string line = "";
-            TextReader r = new StreamReader(stream,System.Text.Encoding.Default); 
+            TextReader r = new StreamReader(stream, Helpers.GetDefaultEncoding()); 
             while (line != null) {
                 line = r.ReadLine();
                 fileStrings.Add(line);
@@ -161,7 +160,7 @@ namespace LumiSoft.Net.Mime.vCard
         public void Parse(Stream stream) {
             List<string> fileStrings = new List<string>();
             string line = "";
-            TextReader r = new StreamReader(stream,System.Text.Encoding.Default); 
+            TextReader r = new StreamReader(stream, Helpers.GetDefaultEncoding()); 
             while (line != null) {
                 line = r.ReadLine();
                 fileStrings.Add(line);
@@ -322,15 +321,17 @@ namespace LumiSoft.Net.Mime.vCard
             set{ m_pItems.SetDecodedValue("NICKNAME",value); }
         }
 
+// TODO check back in netstandard 2.0
+#if !NETSTANDARD
         /// <summary>
         /// Gets or sets person photo. Returns null if PHOTO: item doesn't exist.
         /// </summary>
-        public Image Photo
+        public System.Drawing.Image Photo
         {
             get{ 
                 Item item = m_pItems.GetFirst("PHOTO");
                 if(item != null){                    
-                    return Image.FromStream(new MemoryStream(System.Text.Encoding.Default.GetBytes(item.DecodedValue)));
+                    return System.Drawing.Image.FromStream(new MemoryStream(Helpers.GetDefaultEncoding().GetBytes(item.DecodedValue)));
                 }
                 else{
                     return null;
@@ -349,6 +350,7 @@ namespace LumiSoft.Net.Mime.vCard
                 }
             }
         }
+#endif
 
         /// <summary>
         /// Gets or sets birth date. Returns DateTime.MinValue if not set.

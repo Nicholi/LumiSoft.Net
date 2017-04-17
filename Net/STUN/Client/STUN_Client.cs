@@ -81,7 +81,7 @@ namespace LumiSoft.Net.STUN.Client
                 throw new ArgumentException("Socket must be UDP socket !");
             }
 
-            IPEndPoint remoteEndPoint = new IPEndPoint(System.Net.Dns.GetHostAddresses(host)[0],port);
+            IPEndPoint remoteEndPoint = new IPEndPoint(Helpers.GetHostAddresses(host)[0],port);
             
             /*
                 In test I, the client sends a STUN Binding Request to a server, without any flags set in the
@@ -301,7 +301,7 @@ namespace LumiSoft.Net.STUN.Client
                 throw new ArgumentException("Socket must be UDP socket !");
             }
 
-            IPEndPoint remoteEndPoint = new IPEndPoint(System.Net.Dns.GetHostAddresses(stunServer)[0],port);
+            IPEndPoint remoteEndPoint = new IPEndPoint(Helpers.GetHostAddresses(stunServer)[0],port);
 
             try{
                 // Test I

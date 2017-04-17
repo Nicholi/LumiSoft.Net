@@ -227,7 +227,7 @@ namespace LumiSoft.Net.Mime
 		public MailboxAddress[] Mailboxes
 		{
 			get{ 
-				ArrayList adressesAll = new ArrayList();
+				List<MailboxAddress> adressesAll = new List<MailboxAddress>();
 				foreach(Address adress in this){
 					if(!adress.IsGroupAddress){
 						adressesAll.Add((MailboxAddress)adress);

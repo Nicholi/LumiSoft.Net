@@ -746,7 +746,7 @@ namespace LumiSoft.Net.IMAP.Server
                 }
 
                 // Setup rejected flag, so we respond "* NO Session rejected." any command except LOGOUT.
-                if(e.Response == null || e.Response.ResponseCode.Equals("NO",StringComparison.InvariantCultureIgnoreCase)){
+                if(e.Response == null || e.Response.ResponseCode.Equals("NO", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_SessionRejected = true;
                 }
                                
@@ -911,7 +911,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                 // Command line continues(ends with IMAP literal-string), read while we have full command line.
                 // Skip APPEND command, we handle it specially.
-                if(_CmdReader.EndsWithLiteralString(args) && !string.Equals(cmd,"APPEND",StringComparison.InvariantCultureIgnoreCase)){
+                if(_CmdReader.EndsWithLiteralString(args) && !string.Equals(cmd,"APPEND", Helpers.GetDefaultIgnoreCaseComparison())){
                     _CmdReader cmdReader = new _CmdReader(this,args,Encoding.UTF8);            
                     cmdReader.Start();
 
@@ -2218,19 +2218,19 @@ namespace LumiSoft.Net.IMAP.Server
                     string[] statusItems = parts[1].Substring(1,parts[1].Length - 2).Split(' ');
                     for(int i=0;i<statusItems.Length;i++){
                         string statusItem = statusItems[i];
-                        if(string.Equals(statusItem,"MESSAGES",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(statusItem,"MESSAGES", Helpers.GetDefaultIgnoreCaseComparison())){
                             msgCount = eMessagesInfo.Exists;
                         }
-                        else if(string.Equals(statusItem,"RECENT",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(statusItem,"RECENT", Helpers.GetDefaultIgnoreCaseComparison())){
                             recentCount = eMessagesInfo.Recent;
                         }
-                        else if(string.Equals(statusItem,"UIDNEXT",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(statusItem,"UIDNEXT", Helpers.GetDefaultIgnoreCaseComparison())){
                             uidNext = eMessagesInfo.UidNext;
                         }
-                        else if(string.Equals(statusItem,"UIDVALIDITY",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(statusItem,"UIDVALIDITY", Helpers.GetDefaultIgnoreCaseComparison())){
                             folderUid = eSelect.FolderUID;
                         }
-                        else if(string.Equals(statusItem,"UNSEEN",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(statusItem,"UNSEEN", Helpers.GetDefaultIgnoreCaseComparison())){
                             unseenCount = eMessagesInfo.Unseen;
                         }
                         // Invalid status item.
@@ -2396,7 +2396,7 @@ namespace LumiSoft.Net.IMAP.Server
             string[] args = TextUtils.SplitQuotedString(cmdText,' ');
             if(args.Length >= 2){
                 // At moment we don't support UTF-8 mailboxes.
-                if(string.Equals(args[1],"(UTF8)",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(args[1],"(UTF8)", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"NO",new IMAP_t_orc_Unknown("NOT-UTF-8"),"Mailbox does not support UTF-8 access."));
                 }
                 else{
@@ -2528,7 +2528,7 @@ namespace LumiSoft.Net.IMAP.Server
             string[] args = TextUtils.SplitQuotedString(cmdText,' ');
             if(args.Length >= 2){
                 // At moment we don't support UTF-8 mailboxes.
-                if(string.Equals(args[1],"(UTF8)",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(args[1],"(UTF8)", Helpers.GetDefaultIgnoreCaseComparison())){
                     m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"NO",new IMAP_t_orc_Unknown("NOT-UTF-8"),"Mailbox does not support UTF-8 access."));
                 }
                 else{
@@ -3231,7 +3231,7 @@ namespace LumiSoft.Net.IMAP.Server
             }
 
             foreach(string capa in cmdText.Split(' ')){
-                if(string.Equals("UTF8=ACCEPT",capa,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals("UTF8=ACCEPT",capa, Helpers.GetDefaultIgnoreCaseComparison())){
                     m_MailboxEncoding = IMAP_Mailbox_Encoding.ImapUtf8;
                     m_pResponseSender.SendResponseAsync(new IMAP_r_u_Enable(new string[]{"UTF8=ACCEPT"}));
                 }
@@ -3634,12 +3634,12 @@ namespace LumiSoft.Net.IMAP.Server
                             // Not part number.
                             if(!Net_Utils.IsInteger(section_parts[0])){
                                 // We must have one of the following values here (HEADER,HEADER.FIELDS,HEADER.FIELDS.NOT,MIME,TEXT).
-                                if(remainingSection.Equals("HEADER",StringComparison.InvariantCultureIgnoreCase)){
+                                if(remainingSection.Equals("HEADER", Helpers.GetDefaultIgnoreCaseComparison())){
                                     if(fetchDataType != IMAP_Fetch_DataType.FullMessage && fetchDataType != IMAP_Fetch_DataType.MessageStructure){
                                         fetchDataType = IMAP_Fetch_DataType.MessageHeader;
                                     }
                                 }
-                                else if(remainingSection.Equals("HEADER.FIELDS",StringComparison.InvariantCultureIgnoreCase)){
+                                else if(remainingSection.Equals("HEADER.FIELDS", Helpers.GetDefaultIgnoreCaseComparison())){
                                     rSection.ReadToFirstChar();
                                     if(!rSection.StartsWith("(")){
                                         WriteLine(cmdTag + " BAD Error in arguments.");
@@ -3652,7 +3652,7 @@ namespace LumiSoft.Net.IMAP.Server
                                         fetchDataType = IMAP_Fetch_DataType.MessageHeader;
                                     }
                                 }
-                                else if(remainingSection.Equals("HEADER.FIELDS.NOT",StringComparison.InvariantCultureIgnoreCase)){
+                                else if(remainingSection.Equals("HEADER.FIELDS.NOT", Helpers.GetDefaultIgnoreCaseComparison())){
                                     rSection.ReadToFirstChar();
                                     if(!rSection.StartsWith("(")){
                                         WriteLine(cmdTag + " BAD Error in arguments.");
@@ -3665,10 +3665,10 @@ namespace LumiSoft.Net.IMAP.Server
                                         fetchDataType = IMAP_Fetch_DataType.MessageHeader;
                                     }
                                 }
-                                else if(remainingSection.Equals("MIME",StringComparison.InvariantCultureIgnoreCase)){
+                                else if(remainingSection.Equals("MIME", Helpers.GetDefaultIgnoreCaseComparison())){
                                     fetchDataType = IMAP_Fetch_DataType.FullMessage;
                                 }
-                                else if(remainingSection.Equals("TEXT",StringComparison.InvariantCultureIgnoreCase)){
+                                else if(remainingSection.Equals("TEXT", Helpers.GetDefaultIgnoreCaseComparison())){
                                     fetchDataType = IMAP_Fetch_DataType.FullMessage;
                                 }
                                 // Unknown parts specifier.
@@ -3924,7 +3924,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                                     #region HEADER
 
-                                    if(string.Equals(partSpecifier,"HEADER",StringComparison.InvariantCultureIgnoreCase)){                                        
+                                    if(string.Equals(partSpecifier,"HEADER", Helpers.GetDefaultIgnoreCaseComparison())){                                        
                                         entity.Header.ToStream(tmpFs,new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B,Encoding.UTF8),Encoding.UTF8);
                                         // All header fetches must include header terminator(CRLF).
                                         if(tmpFs.Length >0 ){
@@ -3938,7 +3938,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                                     #region HEADER.FIELDS
 
-                                    else if(string.Equals(partSpecifier,"HEADER.FIELDS",StringComparison.InvariantCultureIgnoreCase)){                            
+                                    else if(string.Equals(partSpecifier,"HEADER.FIELDS", Helpers.GetDefaultIgnoreCaseComparison())){                            
                                         string   fieldsString = section.Split(new char[]{' '},2)[1];
                                         string[] fieldNames   = fieldsString.Substring(1,fieldsString.Length - 2).Split(' ');
                                         foreach(string filedName in fieldNames){
@@ -3962,13 +3962,13 @@ namespace LumiSoft.Net.IMAP.Server
 
                                     #region HEADER.FIELDS.NOT
 
-                                    else if(string.Equals(partSpecifier,"HEADER.FIELDS.NOT",StringComparison.InvariantCultureIgnoreCase)){
+                                    else if(string.Equals(partSpecifier,"HEADER.FIELDS.NOT", Helpers.GetDefaultIgnoreCaseComparison())){
                                         string   fieldsString = section.Split(new char[]{' '},2)[1];
                                         string[] fieldNames   = fieldsString.Substring(1,fieldsString.Length - 2).Split(' ');
                                         foreach(MIME_h field in entity.Header){
                                             bool contains = false;
                                             foreach(string fieldName in fieldNames){
-                                                if(string.Equals(field.Name,fieldName,StringComparison.InvariantCultureIgnoreCase)){
+                                                if(string.Equals(field.Name,fieldName, Helpers.GetDefaultIgnoreCaseComparison())){
                                                     contains = true;
                                                     break;
                                                 }
@@ -3991,7 +3991,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                                     #region MIME
 
-                                    else if(string.Equals(partSpecifier,"MIME",StringComparison.InvariantCultureIgnoreCase)){
+                                    else if(string.Equals(partSpecifier,"MIME", Helpers.GetDefaultIgnoreCaseComparison())){
                                         entity.Header.ToStream(tmpFs,new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B,Encoding.UTF8),Encoding.UTF8);
                                         // All header fetches must include header terminator(CRLF).
                                         if(tmpFs.Length >0 ){
@@ -4005,7 +4005,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                                     #region TEXT
 
-                                    else if(string.Equals(partSpecifier,"TEXT",StringComparison.InvariantCultureIgnoreCase)){
+                                    else if(string.Equals(partSpecifier,"TEXT", Helpers.GetDefaultIgnoreCaseComparison())){
                                         entity.Body.ToStream(tmpFs,new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B,Encoding.UTF8),Encoding.UTF8,false);
                                         tmpFs.Position = 0;
                                     }
@@ -4410,7 +4410,7 @@ namespace LumiSoft.Net.IMAP.Server
                 r.ReadWord();
 
                 string charset = r.ReadWord();
-                if(!(string.Equals(charset,"US-ASCII",StringComparison.InvariantCultureIgnoreCase) || string.Equals(charset,"UTF-8",StringComparison.InvariantCultureIgnoreCase))){
+                if(!(string.Equals(charset,"US-ASCII", Helpers.GetDefaultIgnoreCaseComparison()) || string.Equals(charset,"UTF-8", Helpers.GetDefaultIgnoreCaseComparison()))){
                     m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"NO",new IMAP_t_orc_BadCharset(new string[]{"US-ASCII","UTF-8"}),"Not supported charset."));
 
                     return;
@@ -4547,24 +4547,24 @@ namespace LumiSoft.Net.IMAP.Server
          
             IMAP_Flags_SetType setType;
             bool               silent = false;
-            if(string.Equals(parts[1],"FLAGS",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(parts[1],"FLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Replace;
             }
-            else if(string.Equals(parts[1],"FLAGS.SILENT",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(parts[1],"FLAGS.SILENT", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Replace;
                 silent = true;
             }
-            else if(string.Equals(parts[1],"+FLAGS",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(parts[1],"+FLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Add;
             }
-            else if(string.Equals(parts[1],"+FLAGS.SILENT",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(parts[1],"+FLAGS.SILENT", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Add;
                 silent = true;
             }
-            else if(string.Equals(parts[1],"-FLAGS",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(parts[1],"-FLAGS", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Remove;
             }
-            else if(string.Equals(parts[1],"-FLAGS.SILENT",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(parts[1],"-FLAGS.SILENT", Helpers.GetDefaultIgnoreCaseComparison())){
                 setType = IMAP_Flags_SetType.Remove;
                 silent = true;
             }
@@ -4592,7 +4592,7 @@ namespace LumiSoft.Net.IMAP.Server
             foreach(IMAP_MessageInfo msgInfo in m_pSelectedFolder.Filter(uid,seqSet)){
                 IMAP_e_Store e = OnStore(msgInfo,setType,flags.ToArray(),response);
                 response = e.Response;
-                if(!string.Equals(e.Response.ResponseCode,"OK",StringComparison.InvariantCultureIgnoreCase)){
+                if(!string.Equals(e.Response.ResponseCode,"OK", Helpers.GetDefaultIgnoreCaseComparison())){
                     break;
                 }
 
@@ -4791,16 +4791,16 @@ namespace LumiSoft.Net.IMAP.Server
 
             string[] cmd_cmtText = cmdText.Split(new char[]{' '},2);
                         
-            if(string.Equals(cmd_cmtText[0],"COPY",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(cmd_cmtText[0],"COPY", Helpers.GetDefaultIgnoreCaseComparison())){
                 COPY(true,cmdTag,cmd_cmtText[1]);
             }
-            else if(string.Equals(cmd_cmtText[0],"FETCH",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(cmd_cmtText[0],"FETCH", Helpers.GetDefaultIgnoreCaseComparison())){
                 FETCH(true,cmdTag,cmd_cmtText[1]);
             }
-            else if(string.Equals(cmd_cmtText[0],"STORE",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(cmd_cmtText[0],"STORE", Helpers.GetDefaultIgnoreCaseComparison())){
                 STORE(true,cmdTag,cmd_cmtText[1]);
             }
-            else if(string.Equals(cmd_cmtText[0],"SEARCH",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(cmd_cmtText[0],"SEARCH", Helpers.GetDefaultIgnoreCaseComparison())){
                 SEARCH(true,cmdTag,cmd_cmtText[1]);
             }
             else{
@@ -4861,7 +4861,7 @@ namespace LumiSoft.Net.IMAP.Server
                 if(msgInfo.ContainsFlag("Deleted")){
                     IMAP_e_Expunge e = OnExpunge(msgInfo,response);
                     // Expunge failed.
-                    if(!string.Equals(e.Response.ResponseCode,"OK",StringComparison.InvariantCultureIgnoreCase)){
+                    if(!string.Equals(e.Response.ResponseCode,"OK", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_pResponseSender.SendResponseAsync(e.Response);
 
                         return;
@@ -4968,15 +4968,21 @@ namespace LumiSoft.Net.IMAP.Server
 
             m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus("+","idling"));
 
-            TimerEx timer = new TimerEx(30000,true);
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(delegate(object sender,System.Timers.ElapsedEventArgs e){
-                try{
-                    UpdateSelectedFolderAndSendChanges();
-                }
-                catch{
-                }
-            });
-            timer.Enabled = true;
+            TimerEx timer = new TimerEx(
+                delegate (object sender
+#if !NETSTANDARD
+                    , System.Timers.ElapsedEventArgs e
+#endif
+                ) {
+                    try
+                    {
+                        UpdateSelectedFolderAndSendChanges();
+                    }
+                    catch
+                    {
+                    }
+                }, 30000,true);
+            timer.Start();
 
             // Read client response. 
             SmartStream.ReadLineAsyncOP readLineOP = new SmartStream.ReadLineAsyncOP(new byte[32000],SizeExceededAction.JunkAndThrowException);
@@ -4999,7 +5005,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                     LogAddRead(readLineOP.BytesInBuffer,readLineOP.LineUtf8);
 
-                    if(string.Equals(readLineOP.LineUtf8,"DONE",StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(readLineOP.LineUtf8,"DONE", Helpers.GetDefaultIgnoreCaseComparison())){
                         timer.Dispose();
 
                         m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"OK","IDLE terminated."));
@@ -5015,7 +5021,7 @@ namespace LumiSoft.Net.IMAP.Server
                             }
                             LogAddRead(readLineOP.BytesInBuffer,readLineOP.LineUtf8);
 
-                            if(string.Equals(readLineOP.LineUtf8,"DONE",StringComparison.InvariantCultureIgnoreCase)){
+                            if(string.Equals(readLineOP.LineUtf8,"DONE", Helpers.GetDefaultIgnoreCaseComparison())){
                                 timer.Dispose();
 
                                 m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"OK","IDLE terminated."));
@@ -5042,7 +5048,7 @@ namespace LumiSoft.Net.IMAP.Server
 
                 LogAddRead(readLineOP.BytesInBuffer,readLineOP.LineUtf8);
 
-                if(string.Equals(readLineOP.LineUtf8,"DONE",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(readLineOP.LineUtf8,"DONE", Helpers.GetDefaultIgnoreCaseComparison())){
                     timer.Dispose();
 
                     m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag,"OK","IDLE terminated."));
@@ -5424,7 +5430,7 @@ namespace LumiSoft.Net.IMAP.Server
         private bool SupportsCap(string capability)
         {
             foreach(string c in m_pCapabilities){
-                if(string.Equals(c,capability,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(c,capability, Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
             }

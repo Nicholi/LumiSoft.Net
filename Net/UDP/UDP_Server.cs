@@ -83,7 +83,7 @@ namespace LumiSoft.Net.UDP
                             listeningEPs.Add(epLocalhost);
                         }
                         // Add all host IPs.
-                        foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+                        foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                             IPEndPoint epNew = new IPEndPoint(ip,ep.Port);
                             if(!listeningEPs.Contains(epNew)){
                                 listeningEPs.Add(epNew);
@@ -163,7 +163,7 @@ namespace LumiSoft.Net.UDP
             }
             m_pDataReceivers = null; 
             foreach(Socket socket in m_pSockets){
-                socket.Close();
+                socket.CloseOrDispose();
             }
             m_pSockets = null;
             m_pSendSocketsIPv4 = null;
@@ -641,7 +641,7 @@ namespace LumiSoft.Net.UDP
         private void OnError(Exception x)
         {
             if(this.Error != null){
-                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace()));
+                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace(x, true)));
             }
         }
 

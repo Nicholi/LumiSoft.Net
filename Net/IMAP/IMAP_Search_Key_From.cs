@@ -45,7 +45,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"FROM",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"FROM", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'FROM' key.");
             }
             string value = IMAP_Utils.ReadString(r);

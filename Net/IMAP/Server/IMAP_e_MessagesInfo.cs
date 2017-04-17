@@ -65,7 +65,7 @@ namespace LumiSoft.Net.IMAP.Server
                 int count = 0;
                 foreach(IMAP_MessageInfo m in m_pMessages){
                     foreach(string flag in m.Flags){
-                        if(string.Equals(flag,"Recent",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(flag,"Recent", Helpers.GetDefaultIgnoreCaseComparison())){
                             count++;
                             break;
                         }
@@ -101,7 +101,7 @@ namespace LumiSoft.Net.IMAP.Server
                 int count = m_pMessages.Count;
                 foreach(IMAP_MessageInfo m in m_pMessages){
                     foreach(string flag in m.Flags){
-                        if(string.Equals(flag,"Seen",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(flag,"Seen", Helpers.GetDefaultIgnoreCaseComparison())){
                             count--;
                             break;
                         }

@@ -35,7 +35,7 @@ namespace LumiSoft.Net.MIME
         ~MIME_b_SinglepartBase()
         {
             if(m_pEncodedDataStream != null){
-                m_pEncodedDataStream.Close();
+                m_pEncodedDataStream.CloseOrDispose();
             }
         }
         
@@ -52,7 +52,7 @@ namespace LumiSoft.Net.MIME
             base.SetParent(entity,setContentType);
 
             // Owner entity has no content-type or has different content-type, just add/overwrite it.
-            if(setContentType && (this.Entity.ContentType == null || !string.Equals(this.Entity.ContentType.TypeWithSubtype,this.MediaType,StringComparison.InvariantCultureIgnoreCase))){
+            if(setContentType && (this.Entity.ContentType == null || !string.Equals(this.Entity.ContentType.TypeWithSubtype,this.MediaType, Helpers.GetDefaultIgnoreCaseComparison()))){
                 this.Entity.ContentType = new MIME_h_ContentType(MediaType);
             }
         }
@@ -141,7 +141,7 @@ namespace LumiSoft.Net.MIME
             }
 
             // Owner entity has no content-type or has different content-type, just add/overwrite it.
-            if(this.Entity.ContentType == null || !string.Equals(this.Entity.ContentType.TypeWithSubtype,this.MediaType,StringComparison.InvariantCultureIgnoreCase)){
+            if(this.Entity.ContentType == null || !string.Equals(this.Entity.ContentType.TypeWithSubtype,this.MediaType, Helpers.GetDefaultIgnoreCaseComparison())){
                 this.Entity.ContentType = new MIME_h_ContentType(this.MediaType);
             }
             this.Entity.ContentTransferEncoding = contentTransferEncoding;
@@ -222,7 +222,7 @@ namespace LumiSoft.Net.MIME
                 throw new ArgumentNullException("transferEncoding");
             }
 
-            if(string.Equals(transferEncoding,MIME_TransferEncodings.QuotedPrintable,StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(transferEncoding,MIME_TransferEncodings.QuotedPrintable, Helpers.GetDefaultIgnoreCaseComparison())){
                 using(MemoryStreamEx fs = new MemoryStreamEx()){
                     QuotedPrintableStream encoder = new QuotedPrintableStream(new SmartStream(fs,false),FileAccess.ReadWrite);
                     Net_Utils.StreamCopy(stream,encoder,84000);
@@ -231,7 +231,7 @@ namespace LumiSoft.Net.MIME
                     SetEncodedData(transferEncoding,fs);
                 }
             }
-            else if(string.Equals(transferEncoding,MIME_TransferEncodings.Base64,StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(transferEncoding,MIME_TransferEncodings.Base64, Helpers.GetDefaultIgnoreCaseComparison())){
                 using(MemoryStreamEx fs = new MemoryStreamEx()){
                     Base64Stream encoder = new Base64Stream(fs,false,true,FileAccess.ReadWrite);                                     
                     Net_Utils.StreamCopy(stream,encoder,84000);
@@ -240,13 +240,13 @@ namespace LumiSoft.Net.MIME
                     SetEncodedData(transferEncoding,fs);
                 }
             }            
-            else if(string.Equals(transferEncoding,MIME_TransferEncodings.Binary,StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(transferEncoding,MIME_TransferEncodings.Binary, Helpers.GetDefaultIgnoreCaseComparison())){
                 SetEncodedData(transferEncoding,stream);
             }
-            else if(string.Equals(transferEncoding,MIME_TransferEncodings.EightBit,StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(transferEncoding,MIME_TransferEncodings.EightBit, Helpers.GetDefaultIgnoreCaseComparison())){
                 SetEncodedData(transferEncoding,stream);
             }
-            else if(string.Equals(transferEncoding,MIME_TransferEncodings.SevenBit,StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(transferEncoding,MIME_TransferEncodings.SevenBit, Helpers.GetDefaultIgnoreCaseComparison())){
                 SetEncodedData(transferEncoding,stream);
             }
             else{

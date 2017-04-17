@@ -62,6 +62,10 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns certificates contained in pkcs 7. Returns null if no certificates.</returns>
         public X509Certificate2Collection GetCertificates()
         {
+// TODO check back after netstandard 2.0
+#if NETSTANDARD
+            throw new NotImplementedException("NetStandard is missing SignedCms");
+#else
             if(this.Data == null){
                 return null;
             }
@@ -70,6 +74,7 @@ namespace LumiSoft.Net.MIME
             signedCms.Decode(this.Data);
 
             return signedCms.Certificates;
+#endif
         }
 
         #endregion
@@ -84,7 +89,11 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="InvalidOperationException">Is raised when <b>smime-type != signed-data</b>.</exception>
         public bool VerifySignature()
         {
-            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"signed-data",StringComparison.InvariantCultureIgnoreCase)){
+// TODO check back after netstandard 2.0
+#if NETSTANDARD
+            throw new NotImplementedException("NetStandard is missing SignedCms");
+#else
+            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"signed-data", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new InvalidOperationException("The VerifySignature method is only valid if Content-Type parameter smime-type=signed-data.");
             }
 
@@ -104,6 +113,7 @@ namespace LumiSoft.Net.MIME
             }
 
             return false;
+#endif
         }
 
         #endregion
@@ -118,7 +128,11 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="InvalidOperationException">Is raised when <b>smime-type != signed-data</b>.</exception>
         public MIME_Message GetSignedMime()
         {
-            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"signed-data",StringComparison.InvariantCultureIgnoreCase)){
+// TODO check back after netstandard 2.0
+#if NETSTANDARD
+            throw new NotImplementedException("NetStandard is missing SignedCms");
+#else
+            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"signed-data", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new InvalidOperationException("The VerifySignature method is only valid if Content-Type parameter smime-type=signed-data.");
             }
 
@@ -131,6 +145,7 @@ namespace LumiSoft.Net.MIME
             else{
                 return null;
             }
+#endif
         }
 
         #endregion
@@ -149,7 +164,7 @@ namespace LumiSoft.Net.MIME
             if(cert == null){
                 throw new ArgumentNullException("cert");
             }
-            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"enveloped-data",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(this.Entity.ContentType.Parameters["smime-type"],"enveloped-data", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new InvalidOperationException("The VerifySignature method is only valid if Content-Type parameter smime-type=enveloped-data.");
             }
 

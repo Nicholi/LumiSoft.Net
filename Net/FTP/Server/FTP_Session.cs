@@ -5,7 +5,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Principal;
-using System.Data;
 using System.Globalization;
 
 using LumiSoft.Net.IO;
@@ -67,7 +66,7 @@ namespace LumiSoft.Net.FTP.Server
 
                 // Reset session PASV cached data.
                 if(m_pSession.m_pPassiveSocket != null){
-                    m_pSession.m_pPassiveSocket.Close();
+                    m_pSession.m_pPassiveSocket.CloseOrDispose();
                     m_pSession.m_pPassiveSocket = null;
                 }                
                 m_pSession.m_PassiveMode = false;
@@ -78,7 +77,7 @@ namespace LumiSoft.Net.FTP.Server
                     m_pStream = null;
                 }
                 if(m_pSocket != null){
-                    m_pSocket.Close();
+                    m_pSocket.CloseOrDispose();
                     m_pSocket = null;
                 }
             }
@@ -103,13 +102,35 @@ namespace LumiSoft.Net.FTP.Server
                     WriteLine("150 Waiting data connection on port '" + ((IPEndPoint)m_pSession.m_pPassiveSocket.LocalEndPoint).Port + "'.");
                                                             
                     // Start connection wait timeout timer.
-                    TimerEx timer = new TimerEx(10000,false);
-                    timer.Elapsed += delegate(object sender,System.Timers.ElapsedEventArgs e){
-                        WriteLine("550 Data connection wait timeout.");
-                        Dispose();
-                    };
-                    timer.Enabled = true;
+                    TimerEx timer = new TimerEx(
+                        delegate (object sender
+#if !NETSTANDARD
+                            , System.Timers.ElapsedEventArgs e
+#endif
+                        ) {
+                            WriteLine("550 Data connection wait timeout.");
+                            Dispose();
+                        }, 10000,false);
+                    timer.Start();
 
+#if NETSTANDARD
+                    // NOTE synchronous now
+                    var socket = m_pSession.m_pPassiveSocket.Accept();
+                    try{
+                        timer.Dispose();
+
+                        m_pSocket = socket;
+
+                        // Log
+                        m_pSession.LogAddText("Data connection opened.");
+
+                        StartDataTransfer();
+                    }
+                    catch{
+                        WriteLine("425 Opening data connection failed.");
+                        Dispose();
+                    }
+#else
                     m_pSession.m_pPassiveSocket.BeginAccept(
                         delegate(IAsyncResult ar){
                             try{
@@ -129,12 +150,29 @@ namespace LumiSoft.Net.FTP.Server
                         },
                         null
                     );
+#endif
                 }
                 // Active mode, connect to client data port.
                 else{
                     WriteLine("150 Opening data connection to '" + m_pSession.m_pDataConEndPoint.ToString() + "'.");
                     
 					m_pSocket = new Socket(m_pSession.LocalEndPoint.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
+#if NETSTANDARD
+                    // NOTE synchronous now
+                    m_pSocket.Connect(m_pSession.m_pDataConEndPoint);
+                    try
+                    {
+                        // Log
+                        m_pSession.LogAddText("Data connection opened.");
+
+                        StartDataTransfer();
+                    }
+                    catch
+                    {
+                        WriteLine("425 Opening data connection to '" + m_pSession.m_pDataConEndPoint.ToString() + "' failed.");
+                        Dispose();
+                    }
+#else
                     m_pSocket.BeginConnect(
                         m_pSession.m_pDataConEndPoint,
                         delegate(IAsyncResult ar){
@@ -153,6 +191,7 @@ namespace LumiSoft.Net.FTP.Server
                         },
                         null
                     );
+#endif
                 }
             }
 
@@ -260,7 +299,7 @@ namespace LumiSoft.Net.FTP.Server
                 m_pDataConnection = null;
             }
             if(m_pPassiveSocket != null){
-                m_pPassiveSocket.Close();
+                m_pPassiveSocket.CloseOrDispose();
                 m_pPassiveSocket = null;
             }
         }
@@ -1699,7 +1738,7 @@ namespace LumiSoft.Net.FTP.Server
                    reply will, of course, result.
             */
 
-            if(string.Equals(argsText,"UTF8 ON",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(argsText,"UTF8 ON", Helpers.GetDefaultIgnoreCaseComparison())){
                 WriteLine("200 Ok.");
             }
             else{

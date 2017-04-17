@@ -53,8 +53,7 @@ namespace LumiSoft.Net.DNS.Client
             m_QType       = qtype;
                         
             m_CreateTime    = DateTime.Now;
-            m_pTimeoutTimer = new TimerEx(timeout);
-            m_pTimeoutTimer.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimeoutTimer_Elapsed);
+            m_pTimeoutTimer = new TimerEx(m_pTimeoutTimer_Elapsed, timeout);
         }
                         
         #region method Dispose
@@ -97,7 +96,11 @@ namespace LumiSoft.Net.DNS.Client
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimeoutTimer_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimeoutTimer_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             try{
                 OnTimeout();

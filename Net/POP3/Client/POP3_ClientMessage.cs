@@ -59,7 +59,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -261,7 +261,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             m_pOwner.m_IsMarkedForDeletion = true;
                             SetState(AsyncOP_State.Completed);
                         }
@@ -388,7 +388,7 @@ namespace LumiSoft.Net.POP3.Client
                 throw new InvalidOperationException("Can't access message, it's marked for deletion.");
             }
 
-            return Encoding.Default.GetString(HeaderToByte());
+            return Helpers.GetDefaultEncoding().GetString(HeaderToByte());
         }
 
         #endregion
@@ -502,7 +502,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -712,7 +712,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             SmartStream.ReadPeriodTerminatedAsyncOP readMsgOP = new SmartStream.ReadPeriodTerminatedAsyncOP(m_pStream,long.MaxValue,SizeExceededAction.ThrowException);
                             readMsgOP.Completed += delegate(object sender,EventArgs<SmartStream.ReadPeriodTerminatedAsyncOP> e){
                                 MessageReadingCompleted(readMsgOP);
@@ -921,7 +921,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -1150,7 +1150,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             SmartStream.ReadPeriodTerminatedAsyncOP readMsgOP = new SmartStream.ReadPeriodTerminatedAsyncOP(m_pStream,long.MaxValue,SizeExceededAction.ThrowException);
                             readMsgOP.Completed += delegate(object sender,EventArgs<SmartStream.ReadPeriodTerminatedAsyncOP> e){
                                 MessageReadingCompleted(readMsgOP);

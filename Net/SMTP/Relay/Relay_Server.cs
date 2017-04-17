@@ -100,7 +100,11 @@ namespace LumiSoft.Net.SMTP.Relay
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">Event data.</param>
-        private void m_pTimerTimeout_Elapsed(object sender,System.Timers.ElapsedEventArgs e)
+        private void m_pTimerTimeout_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             try{
                 foreach(Relay_Session session in this.Sessions.ToArray()){
@@ -147,8 +151,7 @@ namespace LumiSoft.Net.SMTP.Relay
             Thread tr1 = new Thread(new ThreadStart(this.Run));
             tr1.Start();
 
-            m_pTimerTimeout = new TimerEx(30000);
-            m_pTimerTimeout.Elapsed += new System.Timers.ElapsedEventHandler(m_pTimerTimeout_Elapsed);
+            m_pTimerTimeout = new TimerEx(m_pTimerTimeout_Elapsed, 30000);
             m_pTimerTimeout.Start();
         }
                 
@@ -201,7 +204,7 @@ namespace LumiSoft.Net.SMTP.Relay
 
                         foreach(IPBindInfo binding in m_pBindings){
                             if(binding.IP == IPAddress.Any){
-                                foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+                                foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                                     if(ip.AddressFamily == AddressFamily.InterNetwork){
                                         IPBindInfo b = new IPBindInfo(binding.HostName,binding.Protocol,ip,25);
                                         if(!m_pLocalEndPointIPv4.Contains(b)){
@@ -211,7 +214,7 @@ namespace LumiSoft.Net.SMTP.Relay
                                 }
                             }
                             else if(binding.IP == IPAddress.IPv6Any){
-                                foreach(IPAddress ip in System.Net.Dns.GetHostAddresses("")){
+                                foreach(IPAddress ip in Helpers.GetHostAddresses("")){
                                     if(ip.AddressFamily == AddressFamily.InterNetworkV6){
                                         IPBindInfo b = new IPBindInfo(binding.HostName,binding.Protocol,ip,25);
                                         if(!m_pLocalEndPointIPv6.Contains(b)){
@@ -788,7 +791,7 @@ namespace LumiSoft.Net.SMTP.Relay
         internal protected virtual void OnError(Exception x)
         {
             if(this.Error != null){
-                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace()));
+                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace(x, true)));
             }
         }
 

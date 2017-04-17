@@ -129,7 +129,7 @@ namespace LumiSoft.Net.IMAP
             // Read "date".
             DateTime date = DateTime.MinValue;
             string dateS = r.ReadWord();            
-            if(!string.IsNullOrEmpty(dateS) && !dateS.Equals("NIL",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.IsNullOrEmpty(dateS) && !dateS.Equals("NIL", Helpers.GetDefaultIgnoreCaseComparison())){
                 date = MIME_Utils.ParseRfc2822DateTime(dateS);
             }
 
@@ -440,7 +440,7 @@ namespace LumiSoft.Net.IMAP
                 if(word == null){
                     throw new ParseException("Excpetcted quoted-string or string-literal, but non available.");
                 }
-                else if(string.Equals(word,"NIL",StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(word,"NIL", Helpers.GetDefaultIgnoreCaseComparison())){
                     return "";
                 }
                 else{

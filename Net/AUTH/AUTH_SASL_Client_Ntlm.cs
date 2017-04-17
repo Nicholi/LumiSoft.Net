@@ -142,10 +142,18 @@ namespace LumiSoft.Net.AUTH
                 data [28] = 0x20; 
                 data [29] = 0x00; 
 
-                byte[] host = Encoding.ASCII.GetBytes(m_Host.ToUpper(CultureInfo.InvariantCulture)); 
+                byte[] host = Encoding.ASCII.GetBytes(m_Host.ToUpper(
+#if !NETSTANDARD
+                    CultureInfo.InvariantCulture
+#endif
+                    )); 
                 Buffer.BlockCopy(host,0,data,32,host.Length); 
 
-                byte[] domain = Encoding.ASCII.GetBytes(m_Domain.ToUpper(CultureInfo.InvariantCulture)); 
+                byte[] domain = Encoding.ASCII.GetBytes(m_Domain.ToUpper(
+#if !NETSTANDARD
+                    CultureInfo.InvariantCulture
+#endif
+                    )); 
                 Buffer.BlockCopy(domain,0,data,dom_off,domain.Length); 
 
                 return data; 
@@ -420,9 +428,17 @@ namespace LumiSoft.Net.AUTH
                              +-------+-------+-------+-------+
                 */
                 
-                byte[] domain = Encoding.Unicode.GetBytes(m_Domain.ToUpper(CultureInfo.InvariantCulture)); 
+                byte[] domain = Encoding.Unicode.GetBytes(m_Domain.ToUpper(
+#if !NETSTANDARD
+                    CultureInfo.InvariantCulture
+#endif
+                    )); 
                 byte[] user   = Encoding.Unicode.GetBytes(m_User); 
-                byte[] host   = Encoding.Unicode.GetBytes(m_Host.ToUpper(CultureInfo.InvariantCulture)); 
+                byte[] host   = Encoding.Unicode.GetBytes(m_Host.ToUpper(
+#if !NETSTANDARD
+                    CultureInfo.InvariantCulture
+#endif
+                    )); 
                 
                 byte[] data = new byte[64 + domain.Length + user.Length + host.Length + 24 + 24];
                 
@@ -530,6 +546,10 @@ namespace LumiSoft.Net.AUTH
             /// <exception cref="ArgumentNullException">Is raised when <b>nonce</b> or <b>password</b> is null reference.</exception>
             public static byte[] CalculateLM(byte[] nonce,string password)
             {
+#if NETSTANDARD
+                // TODO check back netstandard 2.0
+                throw new NotImplementedException("NetStandard is missing DES support");
+#else
                 if(nonce == null){
                     throw new ArgumentNullException("nonce");
                 }
@@ -566,6 +586,7 @@ namespace LumiSoft.Net.AUTH
 
 
                 return calc_resp(nonce,lmBuffer);
+#endif
             }
 
             #endregion
@@ -604,6 +625,10 @@ namespace LumiSoft.Net.AUTH
 
             private static byte[] calc_resp(byte[] nonce,byte[] data)
             {
+#if NETSTANDARD
+                // TODO check back netstandard 2.0
+                throw new NotImplementedException("NetStandard is missing DES");
+#else
                 /*
                  * takes a 21 byte array and treats it as 3 56-bit DES keys. The
                  * 8 byte nonce is encrypted with each key and the resulting 24
@@ -627,6 +652,7 @@ namespace LumiSoft.Net.AUTH
                 ct.TransformBlock(nonce,0,8,response,16); 
                 
                 return response;
+#endif
             }
 
             #endregion
@@ -656,7 +682,11 @@ namespace LumiSoft.Net.AUTH
             { 
                 byte[] key7 = new byte[7]; 
                 int len = System.Math.Min(password.Length - position, 7); 
-                Encoding.ASCII.GetBytes(password.ToUpper(CultureInfo.CurrentCulture),position,len,key7,0); 
+                Encoding.ASCII.GetBytes(password.ToUpper(
+#if !NETSTANDARD
+                    CultureInfo.CurrentCulture
+#endif
+                    ),position,len,key7,0); 
                 byte[] key8 = setup_des_key(key7,0); 
 
                 return key8;

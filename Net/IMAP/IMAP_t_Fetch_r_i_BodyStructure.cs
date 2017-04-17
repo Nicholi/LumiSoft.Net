@@ -67,27 +67,27 @@ namespace LumiSoft.Net.IMAP
                 MIME_h_ContentDisposition disposition = entity.ContentDisposition;
 
                 if(entity is IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart){
-                    if(disposition != null && string.Equals(disposition.DispositionType,"attachment",StringComparison.InvariantCultureIgnoreCase)){
+                    if(disposition != null && string.Equals(disposition.DispositionType,"attachment", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
-                    else if(disposition != null && string.Equals(disposition.DispositionType,"inline",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(disposition != null && string.Equals(disposition.DispositionType,"inline", Helpers.GetDefaultIgnoreCaseComparison())){
                         if(includeInline){
                             retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                         }
                     }
-                    else if(contentType != null && string.Equals(contentType.Type,"application",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(contentType != null && string.Equals(contentType.Type,"application", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
-                    else if(contentType != null && string.Equals(contentType.Type,"image",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(contentType != null && string.Equals(contentType.Type,"image", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
-                    else if(contentType != null && string.Equals(contentType.Type,"video",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(contentType != null && string.Equals(contentType.Type,"video", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
-                    else if(contentType != null && string.Equals(contentType.Type,"audio",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(contentType != null && string.Equals(contentType.Type,"audio", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
-                    else if(contentType != null && string.Equals(contentType.Type,"message",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(contentType != null && string.Equals(contentType.Type,"message", Helpers.GetDefaultIgnoreCaseComparison())){
                         retVal.Add((IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)entity);
                     }
                 }
@@ -108,10 +108,10 @@ namespace LumiSoft.Net.IMAP
         {
             get{
                 foreach(IMAP_t_Fetch_r_i_BodyStructure_e entity in this.AllEntities){
-                    if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
-                    else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed,StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
                 }
@@ -172,7 +172,7 @@ namespace LumiSoft.Net.IMAP
         {
             get{ 
                 foreach(IMAP_t_Fetch_r_i_BodyStructure_e e in this.AllEntities){
-                    if(string.Equals(e.ContentType.TypeWithSubtype,MIME_MediaTypes.Text.plain,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(e.ContentType.TypeWithSubtype,MIME_MediaTypes.Text.plain, Helpers.GetDefaultIgnoreCaseComparison())){
                         return (IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)e;
                     }
                 }
@@ -188,7 +188,7 @@ namespace LumiSoft.Net.IMAP
         {
             get{ 
                 foreach(IMAP_t_Fetch_r_i_BodyStructure_e e in this.AllEntities){
-                    if(string.Equals(e.ContentType.TypeWithSubtype,MIME_MediaTypes.Text.html,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(e.ContentType.TypeWithSubtype,MIME_MediaTypes.Text.html, Helpers.GetDefaultIgnoreCaseComparison())){
                         return (IMAP_t_Fetch_r_i_BodyStructure_e_SinglePart)e;
                     }
                 }

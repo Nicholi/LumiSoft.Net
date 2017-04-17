@@ -327,7 +327,7 @@ namespace LumiSoft.Net
 		/// <returns></returns>
 		public static string[] SplitString(string text,char splitChar)
 		{
-			ArrayList splitParts = new ArrayList();  // Holds splitted parts
+			List<String> splitParts = new List<String>();  // Holds splitted parts
 
 			int lastSplitPoint = 0;
 			int textLength     = text.Length;

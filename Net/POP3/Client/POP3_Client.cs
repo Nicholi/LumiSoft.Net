@@ -145,7 +145,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -357,7 +357,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             // Read capa-list.
                             SmartStream.ReadLineAsyncOP readLineOP = new SmartStream.ReadLineAsyncOP(new byte[8000],SizeExceededAction.JunkAndThrowException);
                             readLineOP.Completed += delegate(object s,EventArgs<SmartStream.ReadLineAsyncOP> e){
@@ -424,7 +424,7 @@ namespace LumiSoft.Net.POP3.Client
                             SetState(AsyncOP_State.Completed);
                         }
                         // We got respone terminator(.).
-                        else if(string.Equals(op.LineUtf8,".",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(op.LineUtf8,".", Helpers.GetDefaultIgnoreCaseComparison())){
                             m_pPop3Client.m_pExtCapabilities.Clear();
                             m_pPop3Client.m_pExtCapabilities.AddRange(m_pResponseLines);
 
@@ -566,7 +566,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -759,7 +759,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){                        
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){                        
                             // Log
                             m_pPop3Client.LogAddText("Starting TLS handshake.");
 
@@ -956,7 +956,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -1146,7 +1146,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){                        
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){                        
                             byte[] buffer = Encoding.UTF8.GetBytes("PASS " + m_Password + "\r\n");
 
                             // Log
@@ -1223,7 +1223,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){                        
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){                        
                             // Start filling messages info.
                             POP3_Client.FillMessagesAsyncOP fillOP = new FillMessagesAsyncOP();
                             fillOP.CompletedAsync += delegate(object sender,EventArgs<FillMessagesAsyncOP> e){
@@ -1406,7 +1406,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -1612,7 +1612,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Authentication succeeded.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             // Start filling messages info.
                             POP3_Client.FillMessagesAsyncOP fillOP = new FillMessagesAsyncOP();
                             fillOP.CompletedAsync += delegate(object sender,EventArgs<FillMessagesAsyncOP> e){
@@ -1807,7 +1807,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -1997,7 +1997,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){                        
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){                        
                             SetState(AsyncOP_State.Completed);
                         }
                         // Server returned error response.
@@ -2137,7 +2137,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;
@@ -2328,7 +2328,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             foreach(POP3_ClientMessage message in m_pPop3Client.m_pMessages){
                                 message.SetMarkedForDeletion(false);
                             }
@@ -2953,7 +2953,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             // Read capa-list.
                             SmartStream.ReadLineAsyncOP readLineOP = new SmartStream.ReadLineAsyncOP(new byte[8000],SizeExceededAction.JunkAndThrowException);
                             readLineOP.Completed += delegate(object s,EventArgs<SmartStream.ReadLineAsyncOP> e){
@@ -3020,7 +3020,7 @@ namespace LumiSoft.Net.POP3.Client
                             SetState(AsyncOP_State.Completed);
                         }
                         // We got respone terminator(.).
-                        else if(string.Equals(op.LineUtf8,".",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(op.LineUtf8,".", Helpers.GetDefaultIgnoreCaseComparison())){
                             m_pPop3Client.m_pExtCapabilities.Clear();
                             m_pPop3Client.m_pExtCapabilities.AddRange(m_pResponseLines);
 
@@ -3372,7 +3372,7 @@ namespace LumiSoft.Net.POP3.Client
                         m_pPop3Client.LogAddRead(op.BytesInBuffer,op.LineUtf8);
                                             
                         // Server returned success response.
-                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(op.LineUtf8.Split(new char[]{' '},2)[0],"+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                             // Read capa-list.
                             SmartStream.ReadLineAsyncOP readLineOP = new SmartStream.ReadLineAsyncOP(new byte[8000],SizeExceededAction.JunkAndThrowException);
                             readLineOP.Completed += delegate(object s,EventArgs<SmartStream.ReadLineAsyncOP> e){
@@ -3439,7 +3439,7 @@ namespace LumiSoft.Net.POP3.Client
                             SetState(AsyncOP_State.Completed);
                         }
                         // We got respone terminator(.).
-                        else if(string.Equals(op.LineUtf8,".",StringComparison.InvariantCultureIgnoreCase)){
+                        else if(string.Equals(op.LineUtf8,".", Helpers.GetDefaultIgnoreCaseComparison())){
                             m_pPop3Client.m_pExtCapabilities.Clear();
                             m_pPop3Client.m_pExtCapabilities.AddRange(m_pResponseLines);
 
@@ -3611,7 +3611,7 @@ namespace LumiSoft.Net.POP3.Client
                     LogAddRead(op.BytesInBuffer,line);
 
                     // POP3 server accepted connection, get greeting text.
-                    if(op.LineUtf8.StartsWith("+OK",StringComparison.InvariantCultureIgnoreCase)){
+                    if(op.LineUtf8.StartsWith("+OK", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_GreetingText = line.Substring(3).Trim();
 
 			            // Try to read APOP hash key, if supports APOP.
@@ -4225,7 +4225,7 @@ namespace LumiSoft.Net.POP3.Client
                         wait.Set();
                     }
                     wait.WaitOne();
-                    wait.Close();
+                    wait.CloseOrDispose();
 
                     if(op.Error != null){
                         throw op.Error;

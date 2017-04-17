@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace LumiSoft.Net.Mime
 {
@@ -33,12 +34,12 @@ namespace LumiSoft.Net.Mime
 		/// Parses parameters from header field.
 		/// </summary>
 		/// <returns></returns>
-		internal Hashtable ParseParameters()
+		internal Dictionary<String, String> ParseParameters()
 		{
 			// Syntax: value;parameterName=parameterValue;parameterName=parameterValue;... 
 			string[] paramNameValues = TextUtils.SplitQuotedString(m_pHeaderField.EncodedValue,';');
 
-			Hashtable retVal = new Hashtable();
+			Dictionary<String, String> retVal = new Dictionary<String, String>();
 			// Skip value, other entries are parameters
 			for(int i=1;i<paramNameValues.Length;i++){
 				string[] paramNameValue = paramNameValues[i].Trim().Split(new char[]{'='},2);					
@@ -71,10 +72,10 @@ namespace LumiSoft.Net.Mime
 		/// </summary>
 		/// <param name="value"></param>
 		/// <param name="parameters"></param>
-		internal void StoreParameters(string value,Hashtable parameters)
+		internal void StoreParameters(string value, Dictionary<String, String> parameters)
 		{
 			string retVal = value;
-			foreach(DictionaryEntry entry in parameters){
+			foreach(var entry in parameters){
 				retVal += ";\t" + entry.Key + "=\"" + entry.Value + "\"";
 			}
 

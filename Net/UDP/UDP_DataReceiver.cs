@@ -122,6 +122,16 @@ namespace LumiSoft.Net.UDP
                     }
                     else{
                         EndPoint rtpRemoteEP = new IPEndPoint(m_pSocket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any,0);
+#if NETSTANDARD
+                        // NOTE synchronous now
+                        var bytesReceived = m_pSocket.ReceiveFrom(
+                            m_pBuffer,
+                            0,
+                            m_BufferSize,
+                            SocketFlags.None,
+                            ref rtpRemoteEP);
+                        this.AsyncSocketReceive(bytesReceived);
+#else
                         m_pSocket.BeginReceiveFrom(
                             m_pBuffer,
                             0,
@@ -131,6 +141,7 @@ namespace LumiSoft.Net.UDP
                             new AsyncCallback(this.AsyncSocketReceive),
                             null
                         );
+#endif
                     }
                 }
                 catch(Exception x){
@@ -182,7 +193,13 @@ namespace LumiSoft.Net.UDP
         /// Is called BeginReceiveFrom has completed.
         /// </summary>
         /// <param name="ar">The result of the asynchronous operation.</param>
-        private void AsyncSocketReceive(IAsyncResult ar)
+        private void AsyncSocketReceive(
+#if NETSTANDARD
+            int bytesReceived
+#else
+            IAsyncResult ar
+#endif
+            )
         {
             if(m_IsDisposed){
                 return;
@@ -190,7 +207,11 @@ namespace LumiSoft.Net.UDP
 
             try{
                 EndPoint remoteEP = new IPEndPoint(IPAddress.Any,0);
+#if NETSTANDARD
+                int count = bytesReceived;
+#else
                 int count = m_pSocket.EndReceiveFrom(ar,ref remoteEP);
+#endif
 
                 OnPacketReceived(m_pBuffer,count,(IPEndPoint)remoteEP);
             }
@@ -201,6 +222,16 @@ namespace LumiSoft.Net.UDP
             try{
                 // Start receiving new packet.
                 EndPoint rtpRemoteEP = new IPEndPoint(m_pSocket.AddressFamily == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any,0);
+#if NETSTANDARD
+                // NOTE synchronous now
+                var moreBytesReceived = m_pSocket.ReceiveFrom(
+                    m_pBuffer,
+                    0,
+                    m_BufferSize,
+                    SocketFlags.None,
+                    ref rtpRemoteEP);
+                this.AsyncSocketReceive(moreBytesReceived);
+#else
                 m_pSocket.BeginReceiveFrom(
                     m_pBuffer,
                     0,
@@ -210,6 +241,7 @@ namespace LumiSoft.Net.UDP
                     new AsyncCallback(this.AsyncSocketReceive),
                     null
                 );
+#endif
             }
             catch(Exception x){
                  OnError(x);

@@ -162,7 +162,7 @@ namespace LumiSoft.Net.AUTH
 		/// <returns>Returns MD5 hash.</returns>
 		private byte[] HmacMd5(string hashKey,string text)
 		{
-			HMACMD5 kMd5 = new HMACMD5(Encoding.Default.GetBytes(text));
+			HMACMD5 kMd5 = new HMACMD5(Helpers.GetDefaultEncoding().GetBytes(text));
 			
 			return kMd5.ComputeHash(Encoding.ASCII.GetBytes(hashKey));
 		}

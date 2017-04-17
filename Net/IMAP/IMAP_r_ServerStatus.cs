@@ -177,10 +177,10 @@ namespace LumiSoft.Net.IMAP
         public bool IsError
         {
             get{ 
-                if(m_ResponseCode.Equals("NO",StringComparison.InvariantCultureIgnoreCase)){
+                if(m_ResponseCode.Equals("NO", Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
-                else if(m_ResponseCode.Equals("BAD",StringComparison.InvariantCultureIgnoreCase)){
+                else if(m_ResponseCode.Equals("BAD", Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
                 else{
@@ -194,7 +194,7 @@ namespace LumiSoft.Net.IMAP
         /// </summary>
         public bool IsContinue
         {
-            get{ return m_ResponseCode.Equals("+",StringComparison.InvariantCultureIgnoreCase); }
+            get{ return m_ResponseCode.Equals("+", Helpers.GetDefaultIgnoreCaseComparison()); }
         }
 
         #endregion

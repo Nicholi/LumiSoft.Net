@@ -43,10 +43,26 @@ namespace LumiSoft.Net.UPnP
         private void Init(string url)
         {
             XmlDocument xml = new XmlDocument();
+#if NETSTANDARD
+            Helpers.SendHttpRequest(url, "GET",
+                contentString: null,
+                handleResponseFunc: (System.Net.WebResponse response) =>
+                    {
+                        using (var stream = response.GetResponseStream())
+                        {
+                            xml.Load(stream);
+                        }
+                    });
+#else
             xml.Load(url);
+#endif
 
             StringWriter xmlString = new StringWriter();
+#if NETSTANDARD
+            xml.WriteTo(XmlWriter.Create(xmlString));
+#else
             xml.WriteTo(new XmlTextWriter(xmlString));
+#endif
             m_DeviceXml = xmlString.ToString();
 
             // Set up namespace manager for XPath   

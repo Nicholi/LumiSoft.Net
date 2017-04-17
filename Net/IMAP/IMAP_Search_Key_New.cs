@@ -37,7 +37,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"NEW",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"NEW", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'NEW' key.");
             }
 

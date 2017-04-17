@@ -45,7 +45,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"NOT",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"NOT", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'NOT' key.");
             }
 

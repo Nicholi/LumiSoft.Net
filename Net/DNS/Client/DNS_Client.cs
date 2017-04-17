@@ -134,11 +134,11 @@ namespace LumiSoft.Net.DNS.Client
                 m_pReceivers = null;
             }
 
-            m_pIPv4Socket.Close();
+            m_pIPv4Socket.CloseOrDispose();
             m_pIPv4Socket = null;
 
             if(m_pIPv6Socket != null){
-                m_pIPv6Socket.Close();
+                m_pIPv6Socket.CloseOrDispose();
                 m_pIPv6Socket = null;
             }
 
@@ -357,7 +357,7 @@ namespace LumiSoft.Net.DNS.Client
             
             // Wait transaction to complete.
             wait.WaitOne();
-            wait.Close();
+            wait.CloseOrDispose();
             wait = null;
 
             return retVal;
@@ -394,7 +394,7 @@ namespace LumiSoft.Net.DNS.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -490,6 +490,23 @@ namespace LumiSoft.Net.DNS.Client
                 // This is probably NetBios name.
 			    if(m_HostNameOrIP.IndexOf(".") == -1){
                     try{
+#if NETSTANDARD
+                        // NOTE synchronous now
+                        foreach (IPAddress ip in Helpers.GetHostAddresses(m_HostNameOrIP))
+                        {
+                            if (ip.AddressFamily == AddressFamily.InterNetwork)
+                            {
+                                m_pIPv4Addresses.Add(ip);
+                            }
+                            else if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+                            {
+                                m_pIPv6Addresses.Add(ip);
+                            }
+                        }
+
+                        // maintain faux async
+                        SetState(AsyncOP_State.Completed);
+#else
                         // This callback is called when BeginGetHostAddresses method has completed.
                         AsyncCallback callback = delegate(IAsyncResult ar){
                             try{
@@ -511,6 +528,7 @@ namespace LumiSoft.Net.DNS.Client
 
                         // Start resolving host ip addresses.
                         System.Net.Dns.BeginGetHostAddresses(m_HostNameOrIP,callback,null); 
+#endif
                     }
                     catch(Exception x){
                         m_pException = x;
@@ -801,7 +819,7 @@ namespace LumiSoft.Net.DNS.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -1169,7 +1187,7 @@ namespace LumiSoft.Net.DNS.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -1458,7 +1476,7 @@ namespace LumiSoft.Net.DNS.Client
                 List<IPAddress> aaaaList = new List<IPAddress>();
 
                 foreach(DNS_rr rr in response.AdditionalAnswers){
-                    if(string.Equals(name,rr.Name,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(name,rr.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                         if(rr is DNS_rr_A){
                             aList.Add(((DNS_rr_A)rr).IP);
                         }
@@ -1983,7 +2001,7 @@ namespace LumiSoft.Net.DNS.Client
             */
 
             int dataLength = (int)data[offset++];
-            string retVal = Encoding.Default.GetString(data,offset,dataLength);
+            string retVal = Helpers.GetDefaultEncoding().GetString(data,offset,dataLength);
             offset += dataLength;
 
             return retVal;
@@ -2110,7 +2128,7 @@ namespace LumiSoft.Net.DNS.Client
 
 			// This is probably NetBios name
 			if(host.IndexOf(".") == -1){
-				return System.Net.Dns.GetHostEntry(host).AddressList;
+				return Helpers.GetHostEntry(host).AddressList;
 			}
 			else{
 				// hostName_IP must be host name, try to resolve it's IP

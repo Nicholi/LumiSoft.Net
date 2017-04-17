@@ -177,7 +177,7 @@ namespace LumiSoft.Net.Mime
 		/// <returns></returns>
 		public HeaderField[] Get(string fieldName)
 		{
-			ArrayList fields = new ArrayList();
+			List<HeaderField> fields = new List<HeaderField>();
 			foreach(HeaderField h in m_pHeaderFields){
 				if(h.Name.ToLower() == fieldName.ToLower()){
 					fields.Add(h);
@@ -206,7 +206,7 @@ namespace LumiSoft.Net.Mime
 		/// <param name="headerString">Header string.</param>
 		public void Parse(string headerString)
 		{
-			Parse(new MemoryStream(Encoding.Default.GetBytes(headerString)));
+			Parse(new MemoryStream(Helpers.GetDefaultEncoding().GetBytes(headerString)));
 		}
 
         /// <summary>

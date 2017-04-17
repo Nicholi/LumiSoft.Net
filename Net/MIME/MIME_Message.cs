@@ -3,8 +3,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
-
 using LumiSoft.Net.IO;
+#if NETSTANDARD
+using System.Reflection;
+#endif
 
 namespace LumiSoft.Net.MIME
 {
@@ -194,7 +196,11 @@ namespace LumiSoft.Net.MIME
                 retVal.Add(currentEntity);
 
                 // Current entity is multipart entity, add it's body-parts for processing.
-                if(this.Body != null && currentEntity.Body.GetType().IsSubclassOf(typeof(MIME_b_Multipart))){
+                if(this.Body != null && currentEntity.Body.GetType()
+#if NETSTANDARD
+                       .GetTypeInfo()
+#endif
+                       .IsSubclassOf(typeof(MIME_b_Multipart))){
                     MIME_EntityCollection bodyParts = ((MIME_b_Multipart)currentEntity.Body).BodyParts;
                     for(int i=0;i<bodyParts.Count;i++){
                         entitiesQueue.Insert(i,bodyParts[i]);
@@ -257,6 +263,10 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="InvalidOperationException">Is raised when this method is called for already signed message.</exception>
         public void ConvertToMultipartSigned(X509Certificate2 signerCert)
         {
+#if NETSTANDARD
+            // TODO check back after netstandard 2.0
+            throw new NotImplementedException("MIME_b_MultipartSigned unsupported currently");
+#else
             if(signerCert == null){
                 throw new ArgumentNullException("signerCert");
             }
@@ -274,6 +284,7 @@ namespace LumiSoft.Net.MIME
             this.Body = multipartSigned;
             multipartSigned.SetCertificate(signerCert);
             multipartSigned.BodyParts.Add(msgEntity);
+#endif
         }
 
         #endregion
@@ -288,15 +299,20 @@ namespace LumiSoft.Net.MIME
         public bool VerifySignatures()
         {
             foreach(MIME_Entity entity in this.AllEntities){
-                if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime, Helpers.GetDefaultIgnoreCaseComparison())){
                     if(!((MIME_b_ApplicationPkcs7Mime)entity.Body).VerifySignature()){
                         return false;
                     }
                 }
-                else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed,StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed, Helpers.GetDefaultIgnoreCaseComparison())){
+// TODO check back after netstandard 2.0
+#if NETSTANDARD
+                    throw new NotImplementedException("MIME_b_MultipartSigned unsupported currently");
+#else
                     if(!((MIME_b_MultipartSigned)entity.Body).VerifySignature()){
                         return false;
                     }
+#endif
                 }
             }
 
@@ -315,10 +331,10 @@ namespace LumiSoft.Net.MIME
         {
             get{
                 foreach(MIME_Entity entity in this.AllEntities){
-                    if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Application.pkcs7_mime, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
-                    else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed,StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(entity.ContentType.TypeWithSubtype,MIME_MediaTypes.Multipart.signed, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
                 }
@@ -350,7 +366,11 @@ namespace LumiSoft.Net.MIME
                     retVal.Add(currentEntity);
 
                     // Current entity is multipart entity, add it's body-parts for processing.
-                    if(this.Body != null && currentEntity.Body.GetType().IsSubclassOf(typeof(MIME_b_Multipart))){
+                    if(this.Body != null && currentEntity.Body.GetType()
+#if NETSTANDARD
+                           .GetTypeInfo()
+#endif
+                           .IsSubclassOf(typeof(MIME_b_Multipart))){
                         MIME_EntityCollection bodyParts = ((MIME_b_Multipart)currentEntity.Body).BodyParts;
                         for(int i=0;i<bodyParts.Count;i++){
                             entitiesQueue.Insert(i,bodyParts[i]);

@@ -54,17 +54,30 @@ namespace LumiSoft.Net.WebDav.Client
 
             byte[] requestContent = Encoding.UTF8.GetBytes(requestContentString.ToString());
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(requestUri);
-            request.Method = "PROPFIND";
-            request.ContentType = "application/xml";
-            request.ContentLength = requestContent.Length;
-            request.Credentials = m_pCredentials;
-            if(depth > -1){
-                request.Headers.Add("Depth: " + depth);
+            Dictionary<String, String> headers = null;
+            if (depth > -1)
+            {
+                headers = new Dictionary<String, String>()
+                    {
+                        { "Depth", depth.ToString() },
+                    };
             }
-            request.GetRequestStream().Write(requestContent,0,requestContent.Length);
-            
-            return WebDav_MultiStatus.Parse(request.GetResponse().GetResponseStream());
+
+            WebDav_MultiStatus status = null;
+            Helpers.SendHttpRequest(requestUri, "PROPFIND", "application/xml", m_pCredentials, headers, 
+                contentBytes: requestContent,
+                modifyRequestFunc: (HttpWebRequest request) =>
+                    {
+#if !NETSTANDARD
+                        request.ContentLength = requestContent.Length;
+#endif
+                    },
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        status = WebDav_MultiStatus.Parse(response.GetResponseStream());
+                    });
+
+            return status;
         }
 
         #endregion
@@ -90,11 +103,7 @@ namespace LumiSoft.Net.WebDav.Client
                 throw new ArgumentNullException("uri");
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
-            request.Method = "MKCOL";
-            request.Credentials = m_pCredentials;
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Helpers.SendHttpRequest(uri, "MKCOL", null, m_pCredentials, contentString: null);
         }
 
         #endregion
@@ -114,14 +123,22 @@ namespace LumiSoft.Net.WebDav.Client
                 throw new ArgumentNullException("uri");
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
-            request.Method = "GET";
-            request.Credentials = m_pCredentials;
+            long innerContentSize = 0;
+            Stream sr = null;
+            Helpers.SendHttpRequest(uri, "GET", null, m_pCredentials, 
+                contentString: null,
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        using(var responseStream = response.GetResponseStream())
+                        {
+                            sr = new MemoryStream();
+                            responseStream.CopyTo(sr);
+                            innerContentSize = response.ContentLength;
+                        }
+                    });
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            contentSize = response.ContentLength;
-
-            return response.GetResponseStream();
+            contentSize = innerContentSize;
+            return sr;
         }
 
         #endregion
@@ -155,11 +172,7 @@ namespace LumiSoft.Net.WebDav.Client
                 throw new ArgumentNullException("uri");
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
-            request.Method = "DELETE";
-            request.Credentials = m_pCredentials;
-
-            request.GetResponse();
+            Helpers.SendHttpRequest(uri, "DELETE", null, m_pCredentials, contentString: null);
         }
 
         #endregion
@@ -185,31 +198,24 @@ namespace LumiSoft.Net.WebDav.Client
             // All this because ms is so lazy, tries to write all data to memory, instead switching to temp file if bigger 
             // data sent.
             try{
-                HttpWebRequest dummy  = (HttpWebRequest)HttpWebRequest.Create(targetUri);
-			    // Set the username and the password.
-			    dummy.Credentials = m_pCredentials;
-			    dummy.PreAuthenticate = true;
-			    dummy.Method = "HEAD";
-			    ((HttpWebResponse)dummy.GetResponse()).Close(); 
+                Helpers.SendHttpRequest(targetUri, "HEAD", null, m_pCredentials, contentString: null);
             }
             catch{
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(targetUri);
-            request.Method = "PUT";
-            request.ContentType = "application/octet-stream";
-            request.Credentials = m_pCredentials;
-            request.PreAuthenticate = true;
-            request.AllowWriteStreamBuffering = false;
-            if(stream.CanSeek){                
-                request.ContentLength = (stream.Length - stream.Position);
-            }            
-            
-            using(Stream requestStream = request.GetRequestStream()){                
-                Net_Utils.StreamCopy(stream,requestStream,32000);
-            }
-
-            request.GetResponse();
+            Helpers.SendHttpRequest(targetUri, "PUT", "application/octet-stream", m_pCredentials, 
+                contentStream: stream,
+                modifyRequestFunc: (HttpWebRequest request) =>
+                    {
+#if !NETSTANDARD
+                        request.PreAuthenticate = true;
+                        request.AllowWriteStreamBuffering = false;
+                        if (stream.CanSeek)
+                        {                
+                            request.ContentLength = (stream.Length - stream.Position);
+                        }
+#endif
+                    });
         }
 
         #endregion
@@ -234,16 +240,16 @@ namespace LumiSoft.Net.WebDav.Client
                 throw new ArgumentNullException(targetUri);
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(sourceUri);
-            request.Method = "COPY";
-            request.Headers.Add("Destination: " + targetUri);
-            request.Headers.Add("Overwrite: " + (overwrite ? "T" : "F"));
-            if(depth > -1){
-                request.Headers.Add("Depth: " + depth);
+            var headers = new Dictionary<String, String>()
+                {
+                    { "Destination", targetUri },
+                    { "Overwrite", (overwrite ? "T" : "F") },
+                };
+            if (depth > -1)
+            {
+                headers.Add("Depth", depth.ToString());
             }
-            request.Credentials = m_pCredentials;
-
-            request.GetResponse();
+            Helpers.SendHttpRequest(sourceUri, "COPY", null, m_pCredentials, headers, contentString: null);
         }
 
         #endregion
@@ -268,16 +274,16 @@ namespace LumiSoft.Net.WebDav.Client
                 throw new ArgumentNullException(targetUri);
             }
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(sourceUri);
-            request.Method = "MOVE";
-            request.Headers.Add("Destination: " + targetUri);
-            request.Headers.Add("Overwrite: " + (overwrite ? "T" : "F"));
-            if(depth > -1){
-                request.Headers.Add("Depth: " + depth);
+            var headers = new Dictionary<String, String>()
+                {
+                    { "Destination", targetUri },
+                    { "Overwrite", (overwrite ? "T" : "F") },
+                };
+            if (depth > -1)
+            {
+                headers.Add("Depth", depth.ToString());
             }
-            request.Credentials = m_pCredentials;
-
-            request.GetResponse();
+            Helpers.SendHttpRequest(sourceUri, "MOVE", null, m_pCredentials, headers, contentString: null);
         }
 
         #endregion

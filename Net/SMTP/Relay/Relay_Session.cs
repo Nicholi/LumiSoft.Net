@@ -892,7 +892,7 @@ namespace LumiSoft.Net.SMTP.Relay
         private bool IsDsnSupported()
         {
             foreach(string feature in m_pSmtpClient.EsmtpFeatures){
-                if(string.Equals(feature,SMTP_ServiceExtensions.DSN,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(feature,SMTP_ServiceExtensions.DSN, Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
             }
@@ -911,7 +911,7 @@ namespace LumiSoft.Net.SMTP.Relay
         private bool IsTlsSupported()
         {
             foreach(string feature in m_pSmtpClient.EsmtpFeatures){
-                if(string.Equals(feature,SMTP_ServiceExtensions.STARTTLS,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(feature,SMTP_ServiceExtensions.STARTTLS, Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
             }

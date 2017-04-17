@@ -32,7 +32,14 @@ namespace LumiSoft.Net.RTP
         {
             // user@host.randomTag
 
-            return Environment.UserName + "@" + System.Net.Dns.GetHostName() + "." + Guid.NewGuid().ToString().Substring(0,8);
+            return
+#if NETSTANDARD
+                // TODO wait for .netstandard 2.0
+                "unknown"
+#else
+                Environment.UserName
+#endif
+                + "@" + System.Net.Dns.GetHostName() + "." + Guid.NewGuid().ToString().Substring(0,8);
         }
 
         #endregion

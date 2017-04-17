@@ -36,7 +36,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string[] code_value = r.ReadParenthesized().Split(new char[]{' '},2);
-            if(!string.Equals("UIDVALIDITY",code_value[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("UIDVALIDITY",code_value[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid UIDVALIDITY response value.","r");
             }
             if(code_value.Length != 2){

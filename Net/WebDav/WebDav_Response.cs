@@ -38,17 +38,17 @@ namespace LumiSoft.Net.WebDav
             }
 
             // Invalid response.
-            if(!string.Equals(reponseNode.NamespaceURI + reponseNode.LocalName,"DAV:response",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(reponseNode.NamespaceURI + reponseNode.LocalName,"DAV:response", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Invalid DAV:response value.");
             }
 
             WebDav_Response retVal = new WebDav_Response();
 
             foreach(XmlNode node in reponseNode.ChildNodes){
-                if(string.Equals(node.LocalName,"href",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(node.LocalName,"href", Helpers.GetDefaultIgnoreCaseComparison())){
                     retVal.m_HRef = node.ChildNodes[0].Value;
                 }
-                else if(string.Equals(node.LocalName,"propstat",StringComparison.InvariantCultureIgnoreCase)){
+                else if(string.Equals(node.LocalName,"propstat", Helpers.GetDefaultIgnoreCaseComparison())){
                     retVal.m_pPropStats.Add(WebDav_PropStat.Parse(node));
                 }
             }

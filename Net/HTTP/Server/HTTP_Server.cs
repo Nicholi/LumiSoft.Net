@@ -1,3 +1,6 @@
+// TODO check back netstandard 2.0
+// really don't know what to do about SocketServer
+#if !NETSTANDARD
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,3 +69,4 @@ namespace LumiSoft.Net.HTTP.Server
 
     }
 }
+#endif

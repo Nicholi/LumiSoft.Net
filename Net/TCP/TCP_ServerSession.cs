@@ -7,9 +7,11 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-
 using LumiSoft.Net.IO;
 using LumiSoft.Net.Log;
+#if NETSTANDARD
+using System.Reflection;
+#endif
 
 namespace LumiSoft.Net.TCP
 {
@@ -78,7 +80,7 @@ namespace LumiSoft.Net.TCP
             }
             m_pTcpStream = null;
             if(m_pRawTcpStream != null){
-                m_pRawTcpStream.Close();
+                m_pRawTcpStream.CloseOrDispose();
             }
             m_pRawTcpStream = null;
             m_pTags = null;
@@ -215,7 +217,7 @@ namespace LumiSoft.Net.TCP
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -290,7 +292,14 @@ namespace LumiSoft.Net.TCP
 
                 try{
                     m_pSslStream = new SslStream(m_pTcpSession.TcpStream.SourceStream,true);
+#if NETSTANDARD
+                    // NOTE synchronously async, yuck
+                    var authTask = System.Threading.Tasks.Task.Run(() => m_pSslStream.AuthenticateAsServerAsync(m_pTcpSession.m_pCertificate));
+                    authTask.GetAwaiter().GetResult();
+                    this.BeginAuthenticateAsServerCompleted();
+#else
                     m_pSslStream.BeginAuthenticateAsServer(m_pTcpSession.m_pCertificate,this.BeginAuthenticateAsServerCompleted,null);
+#endif
                 }
                 catch(Exception x){
                     m_pException = x;
@@ -338,10 +347,16 @@ namespace LumiSoft.Net.TCP
             /// This method is called when "BeginAuthenticateAsServer" has completed.
             /// </summary>
             /// <param name="ar">Asynchronous result.</param>
-            private void BeginAuthenticateAsServerCompleted(IAsyncResult ar)
+            private void BeginAuthenticateAsServerCompleted(
+#if !NETSTANDARD
+                IAsyncResult ar
+#endif
+                )
             {
                 try{
+#if !NETSTANDARD
                     m_pSslStream.EndAuthenticateAsServer(ar);
+#endif
 
                     // Close old stream, but leave source stream open.
                     m_pTcpSession.m_pTcpStream.IsOwner = false;
@@ -853,7 +868,7 @@ namespace LumiSoft.Net.TCP
         protected virtual void OnError(Exception x)
         {
             if(this.Error != null){
-                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace()));
+                this.Error(this,new Error_EventArgs(x,new System.Diagnostics.StackTrace(x, true)));
             }
         }
 

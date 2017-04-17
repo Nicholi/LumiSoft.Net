@@ -34,7 +34,7 @@ namespace LumiSoft.Net.IMAP
             foreach(string flagToAdd in flagsToAdd){
                 bool contains = false;
                 foreach(string flag in flags){
-                    if(string.Equals(flag,flagToAdd,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(flag,flagToAdd, Helpers.GetDefaultIgnoreCaseComparison())){
                         contains = true;
                         break;
                     }
@@ -72,7 +72,7 @@ namespace LumiSoft.Net.IMAP
             foreach(string flag in flags){
                 bool remove = false;
                 foreach(string flagToRemove in flagsToRemove){
-                    if(string.Equals(flag,flagToRemove,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(flag,flagToRemove, Helpers.GetDefaultIgnoreCaseComparison())){
                         remove = true;
                         break;
                     }
@@ -312,7 +312,7 @@ namespace LumiSoft.Net.IMAP
 				}
 			}
 
-			return System.Text.Encoding.Default.GetString(retVal.ToArray());
+			return Helpers.GetDefaultEncoding().GetString(retVal.ToArray());
 		}
 
 		#endregion
@@ -389,7 +389,7 @@ namespace LumiSoft.Net.IMAP
 					// Decode block
 					else{
 						// Get encoded block
-						byte[] encodedBlock = System.Text.Encoding.Default.GetBytes(text.Substring(i + 1,endingPos - i - 1));
+						byte[] encodedBlock = Helpers.GetDefaultEncoding().GetBytes(text.Substring(i + 1,endingPos - i - 1));
 		
 						// Convert to UTF-16 char						
 						byte[] decodedData = Net_Utils.Base64DecodeEx(encodedBlock,base64Chars);
@@ -642,7 +642,7 @@ namespace LumiSoft.Net.IMAP
                 string word = reader.ReadWord();
                 
                 // nstring
-                if(string.Equals(word,"NIL",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(word,"NIL", Helpers.GetDefaultIgnoreCaseComparison())){
                     return null;
                 }
 

@@ -245,7 +245,7 @@ namespace LumiSoft.Net.Mime
 				lineData = r.ReadLine();
 			}
 
-			return System.Text.Encoding.Default.GetString(msHeaders.ToArray());
+			return Helpers.GetDefaultEncoding().GetString(msHeaders.ToArray());
 		}
 
 		#endregion
@@ -298,7 +298,7 @@ namespace LumiSoft.Net.Mime
 					<TAB or SP>aaaaa<CRLF>
 			*/
 
-			using(TextReader r = new StreamReader(new MemoryStream(System.Text.Encoding.Default.GetBytes(headers)))){
+			using(TextReader r = new StreamReader(new MemoryStream(Helpers.GetDefaultEncoding().GetBytes(headers)))){
 				string line = r.ReadLine();
 				while(line != null){
 					// Find line where field begins
@@ -856,7 +856,7 @@ namespace LumiSoft.Net.Mime
                                 decodedWord = Core.QDecode(c,encodedText);
                             }
                             else if(encoding.ToLower() == "b"){
-                                decodedWord = c.GetString(Core.Base64Decode(Encoding.Default.GetBytes(encodedText)));
+                                decodedWord = c.GetString(Core.Base64Decode(Helpers.GetDefaultEncoding().GetBytes(encodedText)));
                             }
                         }
                     }

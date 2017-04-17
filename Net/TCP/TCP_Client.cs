@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 using LumiSoft.Net.IO;
@@ -102,7 +101,11 @@ namespace LumiSoft.Net.TCP
                 throw new ArgumentException("Argument 'port' value must be >= 1.");
             }
 
+#if NETSTANDARD
+            IPAddress[] ips = Helpers.GetHostAddresses(host);
+#else
             IPAddress[] ips = System.Net.Dns.GetHostAddresses(host);
+#endif
             for(int i=0;i<ips.Length;i++){
                 try{
                     Connect(null,new IPEndPoint(ips[i],port),ssl);
@@ -179,7 +182,7 @@ namespace LumiSoft.Net.TCP
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -295,7 +298,13 @@ namespace LumiSoft.Net.TCP
                     m_pTcpClient.LogAddText("Connecting to " + m_pRemoteEP.ToString() + ".");
 
                     // Start connecting.
+#if NETSTANDARD
+                    // NOTE synchronous now
+                    m_pSocket.Connect(m_pRemoteEP);
+                    this.BeginConnectCompleted();
+#else
                     m_pSocket.BeginConnect(m_pRemoteEP,this.BeginConnectCompleted,null);
+#endif
                 }
                 catch(Exception x){
                     m_pException = x;
@@ -349,10 +358,16 @@ namespace LumiSoft.Net.TCP
             /// This method is called when "BeginConnect" has completed.
             /// </summary>
             /// <param name="ar">Asynchronous result.</param>
-            private void BeginConnectCompleted(IAsyncResult ar)
+            private void BeginConnectCompleted(
+#if !NETSTANDARD
+                IAsyncResult ar
+#endif
+                )
             {
                 try{
+#if !NETSTANDARD
                     m_pSocket.EndConnect(ar);
+#endif
 
                     m_pTcpClient.LogAddText("Connected, localEP='" + m_pSocket.LocalEndPoint.ToString() + "'; remoteEP='" + m_pSocket.RemoteEndPoint.ToString() + "'.");
 
@@ -361,7 +376,14 @@ namespace LumiSoft.Net.TCP
                         m_pTcpClient.LogAddText("Starting SSL handshake.");
 
                         m_pStream = new SslStream(new NetworkStream(m_pSocket,true),false,this.RemoteCertificateValidationCallback);
+#if NETSTANDARD
+                        // NOTE synchronous async, yuck
+                        var authTask = System.Threading.Tasks.Task.Run(() => ((SslStream)m_pStream).AuthenticateAsClientAsync("dummy"));
+                        authTask.GetAwaiter().GetResult();
+                        this.BeginAuthenticateAsClientCompleted();
+#else
                         ((SslStream)m_pStream).BeginAuthenticateAsClient("dummy",this.BeginAuthenticateAsClientCompleted,null);
+#endif
                     }
                     // We are done.
                     else{
@@ -388,10 +410,16 @@ namespace LumiSoft.Net.TCP
             /// This method is called when "BeginAuthenticateAsClient" has completed.
             /// </summary>
             /// <param name="ar">Asynchronous result.</param>
-            private void BeginAuthenticateAsClientCompleted(IAsyncResult ar)
+            private void BeginAuthenticateAsClientCompleted(
+#if !NETSTANDARD
+                IAsyncResult ar
+#endif
+                )
             {
                 try{
+#if !NETSTANDARD
                     ((SslStream)m_pStream).EndAuthenticateAsClient(ar);
+#endif
 
                     m_pTcpClient.LogAddText("SSL handshake completed sucessfully.");
 
@@ -449,7 +477,7 @@ namespace LumiSoft.Net.TCP
                         m_pStream.Dispose();
                     }
                     if(m_pSocket != null){
-                        m_pSocket.Close();
+                        m_pSocket.CloseOrDispose();
                     }
                 }
                 catch{
@@ -744,7 +772,13 @@ namespace LumiSoft.Net.TCP
             // FIX ME: if ssl switching fails, it closes source stream or otherwise if ssl successful, source stream leaks.
 
             SslStream sslStream = new SslStream(m_pTcpStream.SourceStream,true,this.RemoteCertificateValidationCallback);
+#if NETSTANDARD
+            // NOTE synchronous async, yuck
+            var authTask = System.Threading.Tasks.Task.Run(() => sslStream.AuthenticateAsClientAsync("dummy"));
+            authTask.GetAwaiter().GetResult();
+#else
             sslStream.AuthenticateAsClient("dummy");
+#endif
 
             // Close old stream, but leave source stream open.
             m_pTcpStream.IsOwner = false;
@@ -844,7 +878,14 @@ namespace LumiSoft.Net.TCP
 
                 try{
                     m_pSslStream = new SslStream(m_pTcpClient.m_pTcpStream.SourceStream,false,this.RemoteCertificateValidationCallback);
+#if NETSTANDARD
+                    // NOTE synchronous async, yuck
+                    var authTask = System.Threading.Tasks.Task.Run(() => m_pSslStream.AuthenticateAsClientAsync("dummy"));
+                    authTask.GetAwaiter().GetResult();
+                    this.BeginAuthenticateAsClientCompleted();
+#else
                     m_pSslStream.BeginAuthenticateAsClient("dummy",this.BeginAuthenticateAsClientCompleted,null);                  
+#endif
                 }
                 catch(Exception x){
                     m_pException = x;
@@ -920,10 +961,16 @@ namespace LumiSoft.Net.TCP
             /// This method is called when "BeginAuthenticateAsClient" has completed.
             /// </summary>
             /// <param name="ar">Asynchronous result.</param>
-            private void BeginAuthenticateAsClientCompleted(IAsyncResult ar)
+            private void BeginAuthenticateAsClientCompleted(
+#if !NETSTANDARD
+                IAsyncResult ar
+#endif
+                )
             {
                 try{
+#if !NETSTANDARD
                     m_pSslStream.EndAuthenticateAsClient(ar);
+#endif
 
                     // Close old stream, but leave source stream open.
                     m_pTcpClient.m_pTcpStream.IsOwner = false;

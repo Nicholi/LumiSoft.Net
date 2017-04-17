@@ -36,7 +36,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"UNSEEN",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"UNSEEN", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'UNSEEN' key.");
             }
 

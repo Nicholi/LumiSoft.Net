@@ -41,7 +41,7 @@ namespace LumiSoft.Net.WebDav
             response.Load(stream);
                       
             // Invalid response.
-            if(!string.Equals(response.ChildNodes[1].NamespaceURI + response.ChildNodes[1].LocalName,"DAV:multistatus",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(response.ChildNodes[1].NamespaceURI + response.ChildNodes[1].LocalName,"DAV:multistatus", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Invalid DAV:multistatus value.");
             }
        

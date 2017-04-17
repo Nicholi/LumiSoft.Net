@@ -108,39 +108,39 @@ namespace LumiSoft.Net.AUTH
                 string   name       = name_value[0].Trim();
 
                 if(name_value.Length == 2){
-                    if(string.Equals(name,"realm",StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(name,"realm", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Realm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"nonce",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"nonce", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Nonce = TextUtils.UnQuoteString(name_value[1]);
                     }
                     // RFC bug ?: RFC 2831. digest-uri = "digest-uri" "=" <"> digest-uri-value <">
                     //            RFC 2617  digest-uri        = "uri" "=" digest-uri-value
-                    else if(string.Equals(name,"uri",StringComparison.InvariantCultureIgnoreCase) || string.Equals(name,"digest-uri",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"uri", Helpers.GetDefaultIgnoreCaseComparison()) || string.Equals(name,"digest-uri", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Uri = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"qop",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"qop", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Qop = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"nc",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"nc", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_NonceCount = Convert.ToInt32(TextUtils.UnQuoteString(name_value[1]));
                     }
-                    else if(string.Equals(name,"cnonce",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"cnonce", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Cnonce = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"response",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"response", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Response = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"opaque",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"opaque", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Opaque = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"username",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"username", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_UserName = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"algorithm",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"algorithm", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Algorithm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"charset",StringComparison.InvariantCultureIgnoreCase)){
+                    else if(string.Equals(name,"charset", Helpers.GetDefaultIgnoreCaseComparison())){
                         m_Charset = TextUtils.UnQuoteString(name_value[1]);
                     }
                 }
@@ -186,17 +186,17 @@ namespace LumiSoft.Net.AUTH
             string a1 = "";
             string a2 = "";
             // Create A1
-            if(string.IsNullOrEmpty(this.Algorithm) || String.Equals(this.Algorithm,"md5",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.IsNullOrEmpty(this.Algorithm) || String.Equals(this.Algorithm,"md5", Helpers.GetDefaultIgnoreCaseComparison())){
                 a1 = userName + ":" + this.Realm + ":" + password;
             }
-            else if(String.Equals(this.Algorithm,"md5-sess",StringComparison.InvariantCultureIgnoreCase)){
+            else if(String.Equals(this.Algorithm,"md5-sess", Helpers.GetDefaultIgnoreCaseComparison())){
                 a1 = Net_Utils.ComputeMd5(userName + ":" + this.Realm + ":" + password,false) + ":" + this.Nonce + ":" + this.CNonce;
             }
             else{
                 throw new ArgumentException("Invalid Algorithm value '" + this.Algorithm + "' !");
             }
             // Create A2            
-            if(string.IsNullOrEmpty(this.Qop) || String.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.IsNullOrEmpty(this.Qop) || String.Equals(this.Qop,"auth", Helpers.GetDefaultIgnoreCaseComparison())){
                 a2 = ":" + this.Uri;
             }
             else{
@@ -281,10 +281,10 @@ namespace LumiSoft.Net.AUTH
             */
 
             string A1 = "";
-            if(string.IsNullOrEmpty(this.Algorithm) || string.Equals(this.Algorithm,"md5",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.IsNullOrEmpty(this.Algorithm) || string.Equals(this.Algorithm,"md5", Helpers.GetDefaultIgnoreCaseComparison())){
                 A1 = userName + ":" + this.Realm + ":" + password;
             }
-            else if(string.Equals(this.Algorithm,"md5-sess",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(this.Algorithm,"md5-sess", Helpers.GetDefaultIgnoreCaseComparison())){
                 A1 = H(userName + ":" + this.Realm + ":" + password) + ":" + this.Nonce + ":" + this.CNonce;
             }
             else{
@@ -292,14 +292,14 @@ namespace LumiSoft.Net.AUTH
             }
 
             string A2 = "";
-            if(string.IsNullOrEmpty(this.Qop) || string.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.IsNullOrEmpty(this.Qop) || string.Equals(this.Qop,"auth", Helpers.GetDefaultIgnoreCaseComparison())){
                 A2 = this.RequestMethod + ":" + this.Uri;
             }
             else{
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
             }
 
-            if(string.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase) || string.Equals(this.Qop,"auth-int",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(this.Qop,"auth", Helpers.GetDefaultIgnoreCaseComparison()) || string.Equals(this.Qop,"auth-int", Helpers.GetDefaultIgnoreCaseComparison())){
                 // request-digest  = <"> < KD ( H(A1),unq(nonce-value) ":" nc-value ":" unq(cnonce-value) ":" unq(qop-value) ":" H(A2) )> <">
                 // We don't add quoutes here.
 

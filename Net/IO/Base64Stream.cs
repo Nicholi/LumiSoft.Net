@@ -112,7 +112,7 @@ namespace LumiSoft.Net.IO
             m_IsDisposed = true;
 
             if(m_IsOwner){
-                m_pStream.Close();
+                m_pStream.CloseOrDispose();
             }
         }
 

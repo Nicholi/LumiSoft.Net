@@ -63,7 +63,7 @@ namespace LumiSoft.Net.IMAP.Server
             }
 
             foreach(string f in m_pFlags){
-                if(string.Equals(f,flag,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(f,flag, Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
             }

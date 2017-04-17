@@ -881,6 +881,8 @@ namespace LumiSoft.Net.IO
                 m_pException       = null;
                 m_IsCallbackCalled = false;
 
+// sidestep the entire async issue on NetStandard but just going synchronous
+#if !NETSTANDARD
                 // Operation may complete asynchronously;
                 if(async){
                     IAsyncResult ar = m_pOwner.m_pStream.BeginRead(buffer,0,count,new AsyncCallback(delegate(IAsyncResult r){
@@ -902,7 +904,9 @@ namespace LumiSoft.Net.IO
                     m_IsCompleted     = m_IsCompletedSync;
                 }
                 // Operation must complete synchronously.
-                else{
+                else
+#endif
+                {
                     m_BytesInBuffer = m_pOwner.m_pStream.Read(buffer,0,count);
                     m_IsCompleted     = true;
                     m_IsCompletedSync = true;
@@ -1052,7 +1056,7 @@ namespace LumiSoft.Net.IO
         private int               m_ReadBufferOffset = 0;
         private int               m_ReadBufferCount  = 0;        
         private BufferReadAsyncOP m_pReadBufferOP    = null;
-        private Encoding          m_pEncoding        = Encoding.Default;
+        private Encoding          m_pEncoding        = Helpers.GetDefaultEncoding();
         private bool              m_CRLFLines        = true;
 
         /// <summary>
@@ -1245,7 +1249,7 @@ namespace LumiSoft.Net.IO
                 throw new InvalidOperationException("EndReadHeader is already called for specified 'asyncResult'.");
             }
             ar.AsyncWaitHandle.WaitOne();
-            ar.AsyncWaitHandle.Close();
+            ar.AsyncWaitHandle.CloseOrDispose();
             ar.IsEndCalled = true;
             if(ar.Exception != null){
                 throw ar.Exception;
@@ -1379,7 +1383,7 @@ namespace LumiSoft.Net.IO
                 throw new InvalidOperationException("EndReadFixedCount is already called for specified 'asyncResult'.");
             }
             ar.AsyncWaitHandle.WaitOne();
-            ar.AsyncWaitHandle.Close();
+            ar.AsyncWaitHandle.CloseOrDispose();
             ar.IsEndCalled = true;
             if(ar.Exception != null){
                 throw ar.Exception;
@@ -1519,7 +1523,7 @@ namespace LumiSoft.Net.IO
                 throw new ArgumentNullException("data");
             }
 
-            byte[] dataBytes = Encoding.Default.GetBytes(data);
+            byte[] dataBytes = Helpers.GetDefaultEncoding().GetBytes(data);
             Write(dataBytes,0,dataBytes.Length);
             Flush();
         }
@@ -1617,8 +1621,6 @@ namespace LumiSoft.Net.IO
         }
 
         #endregion
-
-        #region method WriteStreamAsync
 
         #region class WriteStreamAsyncOP
 
@@ -1742,6 +1744,19 @@ namespace LumiSoft.Net.IO
                 try{
                     while(true){
                         int count = m_Count == -1 ? m_pBuffer.Length : (int)Math.Min(m_pBuffer.Length,m_Count - m_BytesWritten);
+#if NETSTANDARD
+                        // synchronous now
+                        var bytesRead = m_pStream.Read(m_pBuffer, 0, count);
+                        if (ProcessReadDataResult(bytesRead))
+                        {
+                            break;
+                        }
+                        // Error happened in ProcessReadDataResult method.
+                        if (this.State != AsyncOP_State.Active)
+                        {
+                            break;
+                        }
+#else
                         IAsyncResult readResult = m_pStream.BeginRead(
                             m_pBuffer,
                             0,
@@ -1766,6 +1781,7 @@ namespace LumiSoft.Net.IO
                         else{
                             break;
                         }
+#endif
                     }
                 }
                 catch(Exception x){
@@ -1783,10 +1799,20 @@ namespace LumiSoft.Net.IO
             /// </summary>
             /// <param name="readResult">Asynchronous result.</param>
             /// <returns>Retruns true if this method completed asynchronously, otherwise false.</returns>
-            private bool ProcessReadDataResult(IAsyncResult readResult)
+            private bool ProcessReadDataResult(
+#if NETSTANDARD
+                int bytesRead
+#else
+                IAsyncResult readResult
+#endif
+                )
             {
                 try{
+#if NETSTANDARD
+                    int countReaded = bytesRead;
+#else
                     int countReaded = m_pStream.EndRead(readResult);
+#endif
                     if(countReaded == 0){
                         // We readed all stream data and write count not specified, we are done.
                         if(m_Count == -1){
@@ -1928,6 +1954,8 @@ namespace LumiSoft.Net.IO
 
         #endregion
 
+        #region method WriteStreamAsync
+
         /// <summary>
         /// Starts writing stream data to this stream.
         /// </summary>
@@ -1981,7 +2009,7 @@ namespace LumiSoft.Net.IO
                 wait.Set();
             }
             wait.WaitOne();
-            wait.Close();
+            wait.CloseOrDispose();
 
             if(op.Error != null){
                 throw op.Error;
@@ -2431,7 +2459,11 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this method is accessed.</exception>
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when any of the arguments has out of valid range.</exception>
-        public override IAsyncResult BeginRead(byte[] buffer,int offset,int count,AsyncCallback callback,object state)
+        public
+#if !NETSTANDARD
+            override 
+#endif
+            IAsyncResult BeginRead(byte[] buffer,int offset,int count,AsyncCallback callback,object state)
         {
             if(m_IsDisposed){
                 throw new ObjectDisposedException(this.GetType().Name);
@@ -2466,7 +2498,11 @@ namespace LumiSoft.Net.IO
         /// <returns>The total number of bytes read into the <b>buffer</b>. This can be less than the number of bytes requested 
         /// if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>asyncResult</b> is null reference.</exception>
-        public override int EndRead(IAsyncResult asyncResult)
+        public 
+#if !NETSTANDARD
+            override 
+#endif
+            int EndRead(IAsyncResult asyncResult)
         {
             if(asyncResult == null){
                 throw new ArgumentNullException("asyncResult");
@@ -2480,7 +2516,7 @@ namespace LumiSoft.Net.IO
                 throw new InvalidOperationException("EndRead is already called for specified 'asyncResult'.");
             }
             ar.AsyncWaitHandle.WaitOne();
-            ar.AsyncWaitHandle.Close();
+            ar.AsyncWaitHandle.CloseOrDispose();
             ar.IsEndCalled = true;
             
             return ar.BytesStored;            
@@ -2550,7 +2586,11 @@ namespace LumiSoft.Net.IO
         /// /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this method is accessed.</exception>
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when any of the arguments has out of valid range.</exception>
-        public override IAsyncResult BeginWrite(byte[] buffer,int offset,int count,AsyncCallback callback,object state)
+        public
+#if !NETSTANDARD
+            override 
+#endif
+            IAsyncResult BeginWrite(byte[] buffer,int offset,int count,AsyncCallback callback,object state)
         {
             if(m_IsDisposed){
                 throw new ObjectDisposedException("SmartStream");
@@ -2568,10 +2608,14 @@ namespace LumiSoft.Net.IO
                 throw new ArgumentOutOfRangeException("count","Argument 'count' is bigger than than argument 'buffer' can store.");
             }
 
+#if NETSTANDARD
+            return new WriteFauxAsyncOperation(this, buffer, offset, count, callback, state);
+#else
             m_LastActivity  = DateTime.Now;
             m_BytesWritten += count;
 
             return m_pStream.BeginWrite(buffer,offset,count,callback,state);
+#endif
         }
 
         #endregion
@@ -2583,13 +2627,35 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <param name="asyncResult">A reference to the outstanding asynchronous I/O request.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>asyncResult</b> is null reference.</exception>
-        public override void EndWrite(IAsyncResult asyncResult)
+        public
+#if !NETSTANDARD
+            override 
+#endif
+            void EndWrite(IAsyncResult asyncResult)
         {
+#if NETSTANDARD
+            if(asyncResult == null){
+                throw new ArgumentNullException("asyncResult");
+            }
+            if(!(asyncResult is WriteFauxAsyncOperation)){
+                throw new ArgumentException("Argument 'asyncResult' was not returned by a call to the BeginWrite method.");
+            }
+
+            WriteFauxAsyncOperation ar = (WriteFauxAsyncOperation)asyncResult;
+            if (ar.IsEndCalled)
+            {
+                throw new InvalidOperationException("EndWrite is already called for specified 'asyncResult'.");
+            }
+            ar.AsyncWaitHandle.WaitOne();
+            ar.AsyncWaitHandle.CloseOrDispose();
+            ar.IsEndCalled = true;
+#else
             if(asyncResult == null){
                 throw new ArgumentNullException("asyncResult");
             }
 
             m_pStream.EndWrite(asyncResult);
+#endif
         }
 
         #endregion
@@ -3855,6 +3921,151 @@ namespace LumiSoft.Net.IO
 
         #endregion
 
+        #region class WriteFauxAsyncOperation
+
+        private class WriteFauxAsyncOperation : IAsyncResult
+        {
+            private SmartStream m_pOwner = null;
+            private byte[] m_pBuffer = null;
+            private int m_OffsetInBuffer = 0;
+            private int m_Count = 0;
+            private AsyncCallback m_pAsyncCallback = null;
+            private object m_pAsyncState = null;
+            private AutoResetEvent m_pAsyncWaitHandle = null;
+            private bool m_IsCompleted = false;
+            private bool m_IsEndCalled = false;
+            private Exception m_pException = null;
+
+            public WriteFauxAsyncOperation(SmartStream owner, byte[] buffer, int offset, int count, AsyncCallback callback, object asyncState)
+            {
+                if (owner == null)
+                {
+                    throw new ArgumentNullException("owner");
+                }
+                if (buffer == null)
+                {
+                    throw new ArgumentNullException("buffer");
+                }
+                if (offset < 0)
+                {
+                    throw new ArgumentOutOfRangeException("offset", "Argument 'offset' value must be >= 0.");
+                }
+                if (offset > buffer.Length)
+                {
+                    throw new ArgumentOutOfRangeException("offset", "Argument 'offset' value must be < buffer.Length.");
+                }
+                if (count < 0)
+                {
+                    throw new ArgumentOutOfRangeException("count", "Argument 'count' value must be >= 0.");
+                }
+                if (offset + count > buffer.Length)
+                {
+                    throw new ArgumentOutOfRangeException("count", "Argument 'count' is bigger than than argument 'buffer' can store.");
+                }
+
+                m_pOwner = owner;
+                m_pBuffer = buffer;
+                m_OffsetInBuffer = offset;
+                m_Count = count;
+                m_pAsyncCallback = callback;
+                m_pAsyncState = asyncState;
+
+                m_pAsyncWaitHandle = new AutoResetEvent(false);
+
+                DoWrite();
+            }
+
+            #region method DoWrite
+
+            // entirely synchronous version of Write
+            private void DoWrite()
+            {
+                try
+                {
+                    m_pOwner.SourceStream.Write(m_pBuffer, m_OffsetInBuffer, m_Count);
+
+                    m_pOwner.m_LastActivity = DateTime.Now;
+                    m_pOwner.m_BytesWritten += m_Count;
+
+                    Completed();
+                }
+                catch (Exception x)
+                {
+                    m_pException = x;
+                    Completed();
+                }
+            }
+
+            #endregion
+
+            #region method Completed
+
+            /// <summary>
+            /// This method must be called when asynchronous operation has completed.
+            /// </summary>
+            private void Completed()
+            {
+                m_IsCompleted = true;
+                m_pAsyncWaitHandle.Set();
+                if (m_pAsyncCallback != null)
+                {
+                    m_pAsyncCallback(this);
+                }
+            }
+
+            #endregion
+
+
+            #region Properties implementation
+
+            /// <summary>
+            /// Gets a user-defined object that qualifies or contains information about an asynchronous operation.
+            /// </summary>
+            public object AsyncState
+            {
+                get { return m_pAsyncState; }
+            }
+
+            /// <summary>
+            /// Gets a WaitHandle that is used to wait for an asynchronous operation to complete.
+            /// </summary>
+            public WaitHandle AsyncWaitHandle
+            {
+                get { return m_pAsyncWaitHandle; }
+            }
+
+            /// <summary>
+            /// Gets an indication of whether the asynchronous operation completed synchronously.
+            /// </summary>
+            public bool CompletedSynchronously
+            {
+                get { return true; }
+            }
+
+            /// <summary>
+            /// Gets an indication whether the asynchronous operation has completed.
+            /// </summary>
+            public bool IsCompleted
+            {
+                get { return m_IsCompleted; }
+            }
+
+
+            /// <summary>
+            /// Gets or sets if <b>EndWrite</b> method is called for this asynchronous operation.
+            /// </summary>
+            internal bool IsEndCalled
+            {
+                get { return m_IsEndCalled; }
+
+                set { m_IsEndCalled = value; }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
 
         #region method BeginReadLine
 
@@ -3924,7 +4135,7 @@ namespace LumiSoft.Net.IO
                 throw new InvalidOperationException("EndReadLine is already called for specified 'asyncResult'.");
             }
             ar.AsyncWaitHandle.WaitOne();
-            ar.AsyncWaitHandle.Close();
+            ar.AsyncWaitHandle.CloseOrDispose();
             ar.IsEndCalled = true;
             
             if(ar.BytesReaded == 0){

@@ -40,7 +40,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"ON",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"ON", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'ON' key.");
             }
             string value = r.ReadWord();

@@ -1,3 +1,6 @@
+// TODO check back netstandard 2.0
+// really don't know what to do about SocketServerSession
+#if !NETSTANDARD
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -265,3 +268,4 @@ namespace LumiSoft.Net.HTTP.Server
 
     }
 }
+#endif

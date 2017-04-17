@@ -235,7 +235,7 @@ namespace LumiSoft.Net.SIP.Message
 		/// <param name="headerString">Header string.</param>
 		public void Parse(string headerString)
 		{
-			Parse(new MemoryStream(Encoding.Default.GetBytes(headerString)));
+			Parse(new MemoryStream(Helpers.GetDefaultEncoding().GetBytes(headerString)));
 		}
 
 		/// <summary>
@@ -334,232 +334,232 @@ namespace LumiSoft.Net.SIP.Message
 
             #region  Replace short names to long 
 
-            if(string.Equals(name,"i",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(name,"i", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Call-ID";
             }
-            else if(string.Equals(name,"m",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"m", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Contact";
             }
-            else if(string.Equals(name,"e",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"e", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Content-Encoding";
             }
-            else if(string.Equals(name,"l",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"l", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Content-Length";
             }
-            else if(string.Equals(name,"c",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"c", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Content-Type";
             }
-            else if(string.Equals(name,"f",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"f", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "From";
             }
-            else if(string.Equals(name,"s",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"s", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Subject";
             }
-            else if(string.Equals(name,"k",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"k", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Supported";
             }
-            else if(string.Equals(name,"t",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"t", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "To";
             }
-            else if(string.Equals(name,"v",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"v", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Via";
             }
-            else if(string.Equals(name,"u",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"u", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "AllowEevents";
             }
-            else if(string.Equals(name,"r",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"r", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Refer-To";
             }
-            else if(string.Equals(name,"d",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"d", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Request-Disposition";
             }
-            else if(string.Equals(name,"x",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"x", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Session-Expires";
             }
-            else if(string.Equals(name,"o",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"o", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Event";
             }
-            else if(string.Equals(name,"b",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"b", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Referred-By";
             }
-            else if(string.Equals(name,"a",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"a", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Accept-Contact";
             }
-            else if(string.Equals(name,"y",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"y", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Identity";
             }
-            else if(string.Equals(name,"n",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"n", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Identity-Info";
             }
-            else if(string.Equals(name,"j",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"j", Helpers.GetDefaultIgnoreCaseComparison())){
                 name = "Reject-Contact";
             }
 
             #endregion
 
-            if(string.Equals(name,"accept",StringComparison.InvariantCultureIgnoreCase)){
+            if(string.Equals(name,"accept", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AcceptRange>("Accept:",value);
             }
-            else if(string.Equals(name,"accept-contact",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"accept-contact", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ACValue>("Accept-Contact:",value);
             }
-            else if(string.Equals(name,"accept-encoding",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"accept-encoding", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_Encoding>("Accept-Encoding:",value);
             }
-            else if(string.Equals(name,"accept-language",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"accept-language", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_Language>("Accept-Language:",value);
             }
-            else if(string.Equals(name,"accept-resource-priority",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"accept-resource-priority", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_RValue>("Accept-Resource-Priority:",value);
             }
-            else if(string.Equals(name,"alert-info",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"alert-info", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AlertParam>("Alert-Info:",value);
             }
-            else if(string.Equals(name,"allow",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"allow", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_Method>("Allow:",value);
             }
-            else if(string.Equals(name,"allow-events",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"allow-events", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_EventType>("Allow-Events:",value);
             }
-            else if(string.Equals(name,"authentication-info",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"authentication-info", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_AuthenticationInfo>("Authentication-Info:",new SIP_t_AuthenticationInfo(value));
             }
-            else if(string.Equals(name,"authorization",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"authorization", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Credentials>("Authorization:",new SIP_t_Credentials(value));
             }
-            else if(string.Equals(name,"contact",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"contact", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ContactParam>("Contact:",value);
             }
-            else if(string.Equals(name,"Content-Disposition",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"Content-Disposition", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_ContentDisposition>("Content-Disposition:",new SIP_t_ContentDisposition(value));
             }
-            else if(string.Equals(name,"cseq",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"cseq", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_CSeq>("CSeq:",new SIP_t_CSeq(value));
             }
-            else if(string.Equals(name,"content-encoding",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"content-encoding", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ContentCoding>("Content-Encoding:",value);
             }
-            else if(string.Equals(name,"content-language",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"content-language", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_LanguageTag>("Content-Language:",value);
             }
-            else if(string.Equals(name,"error-info",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"error-info", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ErrorUri>("Error-Info:",value);
             }
-            else if(string.Equals(name,"event",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"event", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Event>("Event:",new SIP_t_Event(value));
             }
-            else if(string.Equals(name,"from",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"from", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_From>("From:",new SIP_t_From(value));
             }
-            else if(string.Equals(name,"history-info",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"history-info", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_HiEntry>("History-Info:",value);
             }
-            else if(string.Equals(name,"identity-info",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"identity-info", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_IdentityInfo>("Identity-Info:",new SIP_t_IdentityInfo(value));
             }
-            else if(string.Equals(name,"in-replay-to",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"in-replay-to", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_CallID>("In-Reply-To:",value);
             }
-            else if(string.Equals(name,"join",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"join", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Join>("Join:",new SIP_t_Join(value));
             }
-            else if(string.Equals(name,"min-se",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"min-se", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_MinSE>("Min-SE:",new SIP_t_MinSE(value));
             }
-            else if(string.Equals(name,"path",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"path", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AddressParam>("Path:",value);
             }
-            else if(string.Equals(name,"proxy-authenticate",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"proxy-authenticate", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Challenge>("Proxy-Authenticate:",new SIP_t_Challenge(value));
             }
-            else if(string.Equals(name,"proxy-authorization",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"proxy-authorization", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Credentials>("Proxy-Authorization:",new SIP_t_Credentials(value));
             }
-            else if(string.Equals(name,"proxy-require",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"proxy-require", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_OptionTag>("Proxy-Require:",value);
             }
-            else if(string.Equals(name,"rack",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"rack", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_RAck>("RAck:",new SIP_t_RAck(value));
             }
-            else if(string.Equals(name,"reason",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"reason", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ReasonValue>("Reason:",value);
             }
-            else if(string.Equals(name,"record-route",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"record-route", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AddressParam>("Record-Route:",value);
             }
-            else if(string.Equals(name,"refer-sub",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"refer-sub", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_ReferSub>("Refer-Sub:",new SIP_t_ReferSub(value));
             }
-            else if(string.Equals(name,"refer-to",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"refer-to", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_AddressParam>("Refer-To:",new SIP_t_AddressParam(value));
             }
-            else if(string.Equals(name,"referred-by",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"referred-by", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_ReferredBy>("Referred-By:",new SIP_t_ReferredBy(value));
             }
-            else if(string.Equals(name,"reject-contact",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"reject-contact", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_RCValue>("Reject-Contact:",value);
             }
-            else if(string.Equals(name,"replaces",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"replaces", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_SessionExpires>("Replaces:",new SIP_t_SessionExpires(value));
             }
-            else if(string.Equals(name,"reply-to",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"reply-to", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AddressParam>("Reply-To:",value);
             }
-            else if(string.Equals(name,"request-disposition",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"request-disposition", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_Directive>("Request-Disposition:",value);
             }
-            else if(string.Equals(name,"require",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"require", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_OptionTag>("Require:",value);
             }
-            else if(string.Equals(name,"resource-priority",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"resource-priority", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_RValue>("Resource-Priority:",value);
             }
-            else if(string.Equals(name,"retry-after",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"retry-after", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_RetryAfter>("Retry-After:",new SIP_t_RetryAfter(value));
             }
-            else if(string.Equals(name,"route",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"route", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AddressParam>("Route:",value);
             }
-            else if(string.Equals(name,"security-client",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"security-client", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_SecMechanism>("Security-Client:",value);
             }
-            else if(string.Equals(name,"security-server",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"security-server", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_SecMechanism>("Security-Server:",value);
             }
-            else if(string.Equals(name,"security-verify",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"security-verify", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_SecMechanism>("Security-Verify:",value);
             }
-            else if(string.Equals(name,"service-route",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"service-route", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_AddressParam>("Service-Route:",value);
             }
-            else if(string.Equals(name,"session-expires",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"session-expires", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_SessionExpires>("Session-Expires:",new SIP_t_SessionExpires(value));
             }
-            else if(string.Equals(name,"subscription-state",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"subscription-state", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_SubscriptionState>("Subscription-State:",new SIP_t_SubscriptionState(value));
             }
-            else if(string.Equals(name,"supported",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"supported", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_OptionTag>("Supported:",value);
             }
-            else if(string.Equals(name,"target-dialog",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"target-dialog", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_TargetDialog>("Target-Dialog:",new SIP_t_TargetDialog(value));
             }
-            else if(string.Equals(name,"timestamp",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"timestamp", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Timestamp>("Timestamp:",new SIP_t_Timestamp(value));
             }
-            else if(string.Equals(name,"to",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"to", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_To>("To:",new SIP_t_To(value));
             }
-            else if(string.Equals(name,"unsupported",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"unsupported", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_OptionTag>("Unsupported:",value);
             }
-            else if(string.Equals(name,"via",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"via", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_ViaParm>("Via:",value);
             }
-            else if(string.Equals(name,"warning",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"warning", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_MultiValueHF<SIP_t_WarningValue>("Warning:",value);
             }
-            else if(string.Equals(name,"www-authenticate",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(name,"www-authenticate", Helpers.GetDefaultIgnoreCaseComparison())){
                 return new SIP_SingleValueHF<SIP_t_Challenge>("WWW-Authenticate:",new SIP_t_Challenge(value));
             }
             else{

@@ -257,11 +257,11 @@ namespace LumiSoft.Net.MIME
              
                 string encodedWord = m.Value;
                 try{
-                    if(string.Equals(m.Groups["encoding"].Value,"Q",StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(m.Groups["encoding"].Value,"Q", Helpers.GetDefaultIgnoreCaseComparison())){
                         encodedWord =  MIME_Utils.QDecode(Encoding.GetEncoding(m.Groups["charset"].Value),m.Groups["value"].Value);
                     }
-                    else if(string.Equals(m.Groups["encoding"].Value,"B",StringComparison.InvariantCultureIgnoreCase)){
-                        encodedWord = Encoding.GetEncoding(m.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Encoding.Default.GetBytes(m.Groups["value"].Value)));
+                    else if(string.Equals(m.Groups["encoding"].Value,"B", Helpers.GetDefaultIgnoreCaseComparison())){
+                        encodedWord = Encoding.GetEncoding(m.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Helpers.GetDefaultEncoding().GetBytes(m.Groups["value"].Value)));
                     }
                     // Failed to parse encoded-word, leave it as is. RFC 2047 6.3.
                     // else{

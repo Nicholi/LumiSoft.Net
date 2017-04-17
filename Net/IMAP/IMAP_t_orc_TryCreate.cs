@@ -32,7 +32,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string[] code_value = r.ReadParenthesized().Split(new char[]{' '},2);
-            if(!string.Equals("TRYCREATE",code_value[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("TRYCREATE",code_value[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid TRYCREATE response value.","r");
             }
 

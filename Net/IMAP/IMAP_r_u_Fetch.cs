@@ -151,6 +151,12 @@ namespace LumiSoft.Net.IMAP
             }
 
             // Starts writing response to stream.
+#if NETSTANDARD
+            // NOTE synchronous now
+            stream.Write(response, 0, response.Length);
+            // Completed synchronously, process result.
+            return false;
+#else
             IAsyncResult ar = stream.BeginWrite(
                 response,
                 0,
@@ -185,6 +191,7 @@ namespace LumiSoft.Net.IMAP
             else{
                 return true;
             }
+#endif
         }
 
         #endregion

@@ -36,7 +36,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"DELETED",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"DELETED", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'DELETED' key.");
             }
 

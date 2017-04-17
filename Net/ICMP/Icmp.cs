@@ -139,7 +139,7 @@ namespace LumiSoft.Net.ICMP
 			Socket s = new Socket(AddressFamily.InterNetwork,SocketType.Raw,ProtocolType.Icmp);
 			
 			IPEndPoint ipdest = new IPEndPoint(ip,80);			
-			EndPoint endpoint = (EndPoint)(new IPEndPoint(System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0],80));
+			EndPoint endpoint = (EndPoint)(new IPEndPoint(Helpers.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0],80));
 													
 			ushort id         = (ushort)DateTime.Now.Millisecond;
 			byte[] sendPacket = CreatePacket(id);
@@ -210,7 +210,7 @@ namespace LumiSoft.Net.ICMP
 			Socket s = new Socket(AddressFamily.InterNetwork,SocketType.Raw,ProtocolType.Icmp);
 			
 			IPEndPoint ipdest = new IPEndPoint(ip,80);			
-			EndPoint endpoint = (EndPoint)(new IPEndPoint(System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0],80));
+			EndPoint endpoint = (EndPoint)(new IPEndPoint(Helpers.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0],80));
 													
 			ushort id         = (ushort)DateTime.Now.Millisecond;
 			byte[] sendPacket = CreatePacket(id);

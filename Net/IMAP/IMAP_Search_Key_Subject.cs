@@ -45,7 +45,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SUBJECT",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SUBJECT", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SUBJECT' key.");
             }
             string value = IMAP_Utils.ReadString(r);

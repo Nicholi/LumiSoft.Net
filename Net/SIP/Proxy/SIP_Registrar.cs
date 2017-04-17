@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Timers;
 using System.Net;
 
 using LumiSoft.Net.SIP.Message;
@@ -30,7 +29,7 @@ namespace LumiSoft.Net.SIP.Proxy
         private SIP_Proxy                  m_pProxy         = null;
         private SIP_Stack                  m_pStack         = null;
         private SIP_RegistrationCollection m_pRegistrations = null;
-        private Timer                      m_pTimer         = null;
+        private TimerEx                    m_pTimer         = null;
 
         /// <summary>
         /// Default constructor.
@@ -48,9 +47,8 @@ namespace LumiSoft.Net.SIP.Proxy
 
             m_pRegistrations = new SIP_RegistrationCollection();
 
-            m_pTimer = new Timer(15000);
-            m_pTimer.Elapsed += new ElapsedEventHandler(m_pTimer_Elapsed);
-            m_pTimer.Enabled = true;
+            m_pTimer = new TimerEx(m_pTimer_Elapsed, 15000);
+            m_pTimer.Start();
         }
 
         #region method Dispose
@@ -84,7 +82,11 @@ namespace LumiSoft.Net.SIP.Proxy
 
         #region method m_pTimer_Elapsed
 
-        private void m_pTimer_Elapsed(object sender,ElapsedEventArgs e)
+        private void m_pTimer_Elapsed(object sender
+#if !NETSTANDARD
+            , System.Timers.ElapsedEventArgs e
+#endif
+        )
         {
             m_pRegistrations.RemoveExpired();
         }

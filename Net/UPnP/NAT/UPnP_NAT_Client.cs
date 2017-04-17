@@ -77,9 +77,9 @@ namespace LumiSoft.Net.UPnP.NAT
                         XmlNode currentNode = queue[0];
                         queue.RemoveAt(0);
                
-                        if(string.Equals("urn:schemas-upnp-org:service:WANPPPConnection:1",currentNode.InnerText,StringComparison.InvariantCultureIgnoreCase)){                        
+                        if(string.Equals("urn:schemas-upnp-org:service:WANPPPConnection:1",currentNode.InnerText, Helpers.GetDefaultIgnoreCaseComparison())){                        
                             foreach(XmlNode node in currentNode.ParentNode.ChildNodes){
-                                if(string.Equals("controlURL",node.Name,StringComparison.InvariantCultureIgnoreCase)){
+                                if(string.Equals("controlURL",node.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                                     m_BaseUrl     = devices[0].BaseUrl;
                                     m_ServiceType = "urn:schemas-upnp-org:service:WANPPPConnection:1";
                                     m_ControlUrl  = node.InnerText;
@@ -88,9 +88,9 @@ namespace LumiSoft.Net.UPnP.NAT
                                 }
                             }
                         }
-                        else if(string.Equals("urn:schemas-upnp-org:service:WANIPConnection:1",currentNode.InnerText,StringComparison.InvariantCultureIgnoreCase)){                        
+                        else if(string.Equals("urn:schemas-upnp-org:service:WANIPConnection:1",currentNode.InnerText, Helpers.GetDefaultIgnoreCaseComparison())){                        
                             foreach(XmlNode node in currentNode.ParentNode.ChildNodes){
-                                if(string.Equals("controlURL",node.Name,StringComparison.InvariantCultureIgnoreCase)){
+                                if(string.Equals("controlURL",node.Name, Helpers.GetDefaultIgnoreCaseComparison())){
                                     m_BaseUrl     = devices[0].BaseUrl;
                                     m_ServiceType = "urn:schemas-upnp-org:service:WANIPConnection:1";
                                     m_ControlUrl  = node.InnerText;
@@ -139,8 +139,8 @@ namespace LumiSoft.Net.UPnP.NAT
 
             XmlReader reader = XmlReader.Create(new System.IO.StringReader(soapResponse));
             while(reader.Read()){
-                if(string.Equals("NewExternalIPAddress",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                    return IPAddress.Parse(reader.ReadString());
+                if(string.Equals("NewExternalIPAddress",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                    return IPAddress.Parse(reader.ReadElementContentAsString());
                 }
             }
 
@@ -204,29 +204,29 @@ namespace LumiSoft.Net.UPnP.NAT
 
                     XmlReader reader = XmlReader.Create(new System.IO.StringReader(soapResponse));
                     while(reader.Read()){
-                        if(string.Equals("NewRemoteHost",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            remoteHost = reader.ReadString();
+                        if(string.Equals("NewRemoteHost",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            remoteHost = reader.ReadElementContentAsString();
                         }
-                        else if(string.Equals("NewExternalPort",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            externalPort = reader.ReadString();
+                        else if(string.Equals("NewExternalPort",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            externalPort = reader.ReadElementContentAsString();
                         }
-                        else if(string.Equals("NewProtocol",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            protocol = reader.ReadString();
+                        else if(string.Equals("NewProtocol",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            protocol = reader.ReadElementContentAsString();
                         }
-                        else if(string.Equals("NewInternalPort",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            internalPort = Convert.ToInt32(reader.ReadString());
+                        else if(string.Equals("NewInternalPort",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            internalPort = Convert.ToInt32(reader.ReadElementContentAsString());
                         }
-                        else if(string.Equals("NewInternalClient",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            internalHost = reader.ReadString();
+                        else if(string.Equals("NewInternalClient",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            internalHost = reader.ReadElementContentAsString();
                         }
-                        else if(string.Equals("NewEnabled",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            enabled = Convert.ToBoolean(Convert.ToInt32(reader.ReadString()));
+                        else if(string.Equals("NewEnabled",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            enabled = Convert.ToBoolean(Convert.ToInt32(reader.ReadElementContentAsString()));
                         }
-                        else if(string.Equals("NewPortMappingDescription",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            description = reader.ReadString();
+                        else if(string.Equals("NewPortMappingDescription",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            description = reader.ReadElementContentAsString();
                         }
-                        else if(string.Equals("NewLeaseDuration",reader.Name,StringComparison.InvariantCultureIgnoreCase)){
-                            leaseDuration = Convert.ToInt32(reader.ReadString());
+                        else if(string.Equals("NewLeaseDuration",reader.Name, Helpers.GetDefaultIgnoreCaseComparison())){
+                            leaseDuration = Convert.ToInt32(reader.ReadElementContentAsString());
                         }
                     }
 
@@ -409,20 +409,28 @@ namespace LumiSoft.Net.UPnP.NAT
         {
             byte[] requestBody = Encoding.UTF8.GetBytes(soapData);
 
-            WebRequest request = WebRequest.Create(m_BaseUrl + m_ControlUrl);
-            request.Method = "POST";
-            request.Headers.Add("SOAPAction",m_ServiceType + "#" + method);
-            request.ContentType = "text/xml; charset=\"utf-8\";";
-            request.ContentLength = requestBody.Length;
+            String responseStr = null;
+            Helpers.SendHttpRequest(m_BaseUrl + m_ControlUrl, "POST", "text/xml; charset=\"utf-8\";", null,
+                new Dictionary<String, String>()
+                    {
+                        { "SOAPAction", m_ServiceType + "#" + method },
+                    },
+                contentBytes: requestBody,
+                modifyRequestFunc: (HttpWebRequest request) =>
+                    {
+#if !NETSTANDARD
+                        request.ContentLength = requestBody.Length;
+#endif
+                    },
+                handleResponseFunc: (WebResponse response) =>
+                    {
+                        using (var reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            responseStr = reader.ReadToEnd();
+                        }
+                    });
 
-            // Send SOAP body to server.
-            request.GetRequestStream().Write(requestBody,0,requestBody.Length);
-            request.GetRequestStream().Close();
-
-            WebResponse response = request.GetResponse();
-            using(TextReader r = new StreamReader(response.GetResponseStream())){
-                return r.ReadToEnd();
-            }
+            return responseStr;
         }
 
         #endregion

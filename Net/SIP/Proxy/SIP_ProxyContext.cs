@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Timers;
 using System.Net;
 using System.Threading;
 
@@ -476,7 +475,11 @@ namespace LumiSoft.Net.SIP.Proxy
 
             #region method m_pTimerC_Elapsed
 
-            private void m_pTimerC_Elapsed(object sender,ElapsedEventArgs e)
+            private void m_pTimerC_Elapsed(object sender
+#if !NETSTANDARD
+                , System.Timers.ElapsedEventArgs e
+#endif
+            )
             {
                 lock(m_pLock){
                     /* RFC 3261 16.8 Processing Timer C.
@@ -662,10 +665,7 @@ namespace LumiSoft.Net.SIP.Proxy
                     processing when it fires.
                 */                
                 if(request.RequestLine.Method == SIP_Methods.INVITE){
-                    m_pTimerC = new TimerEx();
-                    m_pTimerC.AutoReset = false;
-                    m_pTimerC.Interval = 3 * 60 * 1000;
-                    m_pTimerC.Elapsed += new ElapsedEventHandler(m_pTimerC_Elapsed);
+                    m_pTimerC = new TimerEx(m_pTimerC_Elapsed, 3 * 60 * 1000, false);
                 }
 
                 #endregion

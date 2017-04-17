@@ -37,7 +37,7 @@ namespace LumiSoft.Net.WebDav
             }
 
             // Invalid response.
-            if(!string.Equals(propNode.NamespaceURI + propNode.LocalName,"DAV:prop",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(propNode.NamespaceURI + propNode.LocalName,"DAV:prop", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Invalid DAV:prop value.");
             }
 
@@ -45,7 +45,7 @@ namespace LumiSoft.Net.WebDav
 
             foreach(XmlNode node in propNode.ChildNodes){
                 // Resource type property.
-                if(string.Equals(node.LocalName,"resourcetype",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(node.LocalName,"resourcetype", Helpers.GetDefaultIgnoreCaseComparison())){
                     retVal.m_pProperties.Add(WebDav_p_ResourceType.Parse(node));
                 }
                 // Default name-value property.

@@ -431,7 +431,7 @@ namespace LumiSoft.Net.SIP.Stack
                 // Serach credential for the specified challange.
                 NetworkCredential credential = null;
                 foreach(NetworkCredential c in credentials){
-                    if(string.Equals(c.Domain,authDigest.Realm,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(c.Domain,authDigest.Realm, Helpers.GetDefaultIgnoreCaseComparison())){
                         credential = c;
                         break;
                     }
@@ -461,7 +461,7 @@ namespace LumiSoft.Net.SIP.Stack
                 // Serach credential for the specified challange.
                 NetworkCredential credential = null;
                 foreach(NetworkCredential c in credentials){
-                    if(string.Equals(c.Domain,authDigest.Realm,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(c.Domain,authDigest.Realm, Helpers.GetDefaultIgnoreCaseComparison())){
                         credential = c;
                         break;
                     }

@@ -31,7 +31,7 @@ namespace LumiSoft.Net.WebDav
         public bool Contains(string resourceType)
         {
             foreach(string item in m_pItems){
-                if(string.Equals(resourceType,item,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(resourceType,item, Helpers.GetDefaultIgnoreCaseComparison())){
                     return true;
                 }
             }
@@ -58,7 +58,7 @@ namespace LumiSoft.Net.WebDav
             }
 
             // Invalid response.
-            if(!string.Equals(resourcetypeNode.NamespaceURI + resourcetypeNode.LocalName,"DAV:resourcetype",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(resourcetypeNode.NamespaceURI + resourcetypeNode.LocalName,"DAV:resourcetype", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Invalid DAV:resourcetype value.");
             }
 

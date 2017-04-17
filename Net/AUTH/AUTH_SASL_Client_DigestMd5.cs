@@ -116,7 +116,7 @@ namespace LumiSoft.Net.AUTH
                 m_IsCompleted = true;
 
                 // Check rspauth value.
-                if(!string.Equals(Encoding.UTF8.GetString(serverResponse),m_pResponse.ToRspauthResponse(m_UserName,m_Password),StringComparison.InvariantCultureIgnoreCase)){
+                if(!string.Equals(Encoding.UTF8.GetString(serverResponse),m_pResponse.ToRspauthResponse(m_UserName,m_Password), Helpers.GetDefaultIgnoreCaseComparison())){
                     throw new Exception("Server server 'rspauth' value mismatch with local 'rspauth' value.");
                 }
 

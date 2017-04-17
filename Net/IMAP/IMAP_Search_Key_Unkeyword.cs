@@ -45,7 +45,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"UNKEYWORD",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"UNKEYWORD", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'UNKEYWORD' key.");
             }
             string value = r.ReadWord();

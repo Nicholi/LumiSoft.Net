@@ -288,11 +288,11 @@ namespace LumiSoft.Net.MIME
                     m_Offset += match.Length;
 
                     try{
-                        if(string.Equals(match.Groups["encoding"].Value,"Q",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(match.Groups["encoding"].Value,"Q", Helpers.GetDefaultIgnoreCaseComparison())){
                             retVal.Append(MIME_Utils.QDecode(Encoding.GetEncoding(match.Groups["charset"].Value),match.Groups["value"].Value));
                         }
-                        else if(string.Equals(match.Groups["encoding"].Value,"B",StringComparison.InvariantCultureIgnoreCase)){
-                            retVal.Append(Encoding.GetEncoding(match.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Encoding.Default.GetBytes(match.Groups["value"].Value))));
+                        else if(string.Equals(match.Groups["encoding"].Value,"B", Helpers.GetDefaultIgnoreCaseComparison())){
+                            retVal.Append(Encoding.GetEncoding(match.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Helpers.GetDefaultEncoding().GetBytes(match.Groups["value"].Value))));
                         }
                         // Failed to parse encoded-word, leave it as is. RFC 2047 6.3.
                         else{
@@ -441,11 +441,11 @@ namespace LumiSoft.Net.MIME
                 word = encodedword_regex.Replace(word,delegate(Match m){
                     string encodedWord = m.Value;
                     try{
-                        if(string.Equals(m.Groups["encoding"].Value,"Q",StringComparison.InvariantCultureIgnoreCase)){
+                        if(string.Equals(m.Groups["encoding"].Value,"Q", Helpers.GetDefaultIgnoreCaseComparison())){
                             return MIME_Utils.QDecode(Encoding.GetEncoding(m.Groups["charset"].Value),m.Groups["value"].Value);
                         }
-                        else if(string.Equals(m.Groups["encoding"].Value,"B",StringComparison.InvariantCultureIgnoreCase)){
-                            return Encoding.GetEncoding(m.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Encoding.Default.GetBytes(m.Groups["value"].Value)));
+                        else if(string.Equals(m.Groups["encoding"].Value,"B", Helpers.GetDefaultIgnoreCaseComparison())){
+                            return Encoding.GetEncoding(m.Groups["charset"].Value).GetString(Net_Utils.FromBase64(Helpers.GetDefaultEncoding().GetBytes(m.Groups["value"].Value)));
                         }
                         // Failed to parse encoded-word, leave it as is. RFC 2047 6.3.
                         else{
@@ -573,7 +573,7 @@ namespace LumiSoft.Net.MIME
                 throw new ArgumentNullException("value");
             }
 
-            return m_Source.Substring(m_Offset).StartsWith(value,StringComparison.InvariantCultureIgnoreCase);
+            return m_Source.Substring(m_Offset).StartsWith(value, Helpers.GetDefaultIgnoreCaseComparison());
         }
 
         #endregion

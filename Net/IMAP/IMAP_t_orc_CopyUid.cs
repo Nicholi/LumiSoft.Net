@@ -60,7 +60,7 @@ namespace LumiSoft.Net.IMAP
             */
 
             string[] code_mailboxUid_sourceSeqSet_targetSeqSet = r.ReadParenthesized().Split(new char[]{' '},4);
-            if(!string.Equals("COPYUID",code_mailboxUid_sourceSeqSet_targetSeqSet[0],StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals("COPYUID",code_mailboxUid_sourceSeqSet_targetSeqSet[0], Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ArgumentException("Invalid COPYUID response value.","r");
             }
             if(code_mailboxUid_sourceSeqSet_targetSeqSet.Length != 4){

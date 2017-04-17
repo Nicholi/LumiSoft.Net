@@ -40,7 +40,7 @@ namespace LumiSoft.Net.IMAP
             }
 
             string word = r.ReadWord();
-            if(!string.Equals(word,"SMALLER",StringComparison.InvariantCultureIgnoreCase)){
+            if(!string.Equals(word,"SMALLER", Helpers.GetDefaultIgnoreCaseComparison())){
                 throw new ParseException("Parse error: Not a SEARCH 'SMALLER' key.");
             }
             string value = r.ReadWord();

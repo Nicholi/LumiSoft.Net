@@ -705,7 +705,7 @@ namespace LumiSoft.Net.IMAP
             if(text == null){
                 return null;
             }
-            else if(string.Equals(text,"NIL",StringComparison.InvariantCultureIgnoreCase)){
+            else if(string.Equals(text,"NIL", Helpers.GetDefaultIgnoreCaseComparison())){
                 return "";
             }
             else{

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// likely will never be supported because of depenendcy on System.Window.Forms
+#if !NETSTANDARD
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
@@ -462,3 +464,4 @@ namespace LumiSoft.Net.SIP.Debug
 		#endregion
     }
 }
+#endif

@@ -200,7 +200,7 @@ namespace LumiSoft.Net.MIME
             */
 
             if(charset == null){
-                charset = Encoding.Default;
+                charset = Helpers.GetDefaultEncoding();
             }
 
             StringBuilder retVal = new StringBuilder();

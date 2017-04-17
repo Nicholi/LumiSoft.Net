@@ -115,7 +115,7 @@ namespace LumiSoft.Net.IMAP
                 }
 
                 // Only for ContentType message/rfc822
-                if(string.Equals(this.ContentType.TypeWithSubype,MIME_MediaTypes.Message.rfc822,StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(this.ContentType.TypeWithSubype,MIME_MediaTypes.Message.rfc822, Helpers.GetDefaultIgnoreCaseComparison())){
                     r.ReadToFirstChar();
  
                     // envelope
@@ -210,7 +210,7 @@ namespace LumiSoft.Net.IMAP
         public int ContentSize
         {
             get{
-                if(string.Equals(this.ContentType.Type,"multipart",StringComparison.InvariantCultureIgnoreCase)){
+                if(string.Equals(this.ContentType.Type,"multipart", Helpers.GetDefaultIgnoreCaseComparison())){
                     throw new Exception("NOTE: ContentSize property is available only for non-multipart contentype !");
                 }
 
@@ -225,7 +225,7 @@ namespace LumiSoft.Net.IMAP
         public IMAP_Envelope Envelope
         {
             get{ 
-                if(!string.Equals(this.ContentType.Type,"message",StringComparison.InvariantCultureIgnoreCase)){
+                if(!string.Equals(this.ContentType.Type,"message", Helpers.GetDefaultIgnoreCaseComparison())){
                     throw new Exception("NOTE: Envelope property is available only for message/rfc2822 contentype !");
                 }
 
@@ -239,7 +239,7 @@ namespace LumiSoft.Net.IMAP
         public int ContentLines
         {
             get{ 
-                if(!string.Equals(this.ContentType.Type,"text",StringComparison.InvariantCultureIgnoreCase)){
+                if(!string.Equals(this.ContentType.Type,"text", Helpers.GetDefaultIgnoreCaseComparison())){
                     throw new Exception("NOTE: ContentLines property is available only for text/xxx content type !");
                 }
 

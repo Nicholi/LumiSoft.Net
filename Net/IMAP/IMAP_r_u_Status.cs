@@ -85,19 +85,19 @@ namespace LumiSoft.Net.IMAP
             string   folder = TextUtils.UnQuoteString(IMAP_Utils.Decode_IMAP_UTF7_String(r.ReadWord()));
             string[] items  = r.ReadParenthesized().Split(' ');
             for(int i=0;i<items.Length;i+=2){
-                if(items[i].Equals("MESSAGES",StringComparison.InvariantCultureIgnoreCase)){
+                if(items[i].Equals("MESSAGES", Helpers.GetDefaultIgnoreCaseComparison())){
                     messages = Convert.ToInt32(items[i + 1]);
                 }
-                else if(items[i].Equals("RECENT",StringComparison.InvariantCultureIgnoreCase)){
+                else if(items[i].Equals("RECENT", Helpers.GetDefaultIgnoreCaseComparison())){
                     recent = Convert.ToInt32(items[i + 1]);
                 }
-                else if(items[i].Equals("UIDNEXT",StringComparison.InvariantCultureIgnoreCase)){
+                else if(items[i].Equals("UIDNEXT", Helpers.GetDefaultIgnoreCaseComparison())){
                     uidNext = Convert.ToInt64(items[i + 1]);
                 }
-                else if(items[i].Equals("UIDVALIDITY",StringComparison.InvariantCultureIgnoreCase)){
+                else if(items[i].Equals("UIDVALIDITY", Helpers.GetDefaultIgnoreCaseComparison())){
                     folderUid = Convert.ToInt64(items[i + 1]);
                 }
-                else if(items[i].Equals("UNSEEN",StringComparison.InvariantCultureIgnoreCase)){
+                else if(items[i].Equals("UNSEEN", Helpers.GetDefaultIgnoreCaseComparison())){
                     unseen = Convert.ToInt32(items[i + 1]);
                 }
             }

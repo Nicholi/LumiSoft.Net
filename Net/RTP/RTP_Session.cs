@@ -95,11 +95,13 @@ namespace LumiSoft.Net.RTP
             m_pRtcpSocket = new Socket(localEP.IP.AddressFamily,SocketType.Dgram,ProtocolType.Udp);
             m_pRtcpSocket.Bind(localEP.RtcpEP);
                         
-            m_pRtcpTimer = new TimerEx();
-            m_pRtcpTimer.Elapsed += new System.Timers.ElapsedEventHandler(delegate(object sender,System.Timers.ElapsedEventArgs e){
+            m_pRtcpTimer = new TimerEx(delegate(object sender
+#if !NETSTANDARD
+                ,System.Timers.ElapsedEventArgs e
+#endif
+            ){
                 SendRtcp();
-            });
-            m_pRtcpTimer.AutoReset = false;
+            }, false);
         }
 
         #region method Dispose
@@ -136,9 +138,9 @@ namespace LumiSoft.Net.RTP
             m_pMembers = null;
             m_pSenders = null;
             m_pConflictingEPs = null;
-            m_pRtpSocket.Close();
+            m_pRtpSocket.CloseOrDispose();
             m_pRtpSocket = null;
-            m_pRtcpSocket.Close();
+            m_pRtcpSocket.CloseOrDispose();
             m_pRtcpSocket = null;
             m_pUdpDataReceivers = null;
 
@@ -498,7 +500,13 @@ namespace LumiSoft.Net.RTP
             // Send packet to each remote target.
             foreach(RTP_Address target in this.Targets){
                 try{
+#if NETSTANDARD
+                    // NOTE synchronous now
+                    var bytesRead = m_pRtpSocket.SendTo(packetBytes, 0, count, SocketFlags.None, target.RtpEP);
+                    this.RtpAsyncSocketSendCompleted(bytesRead);
+#else
                     m_pRtpSocket.BeginSendTo(packetBytes,0,count,SocketFlags.None,target.RtpEP,this.RtpAsyncSocketSendCompleted,null);
+#endif
                 }
                 catch{
                     m_RtpFailedTransmissions++;
@@ -941,7 +949,7 @@ namespace LumiSoft.Net.RTP
         {
             m_pRtcpTimer.Stop();
             m_pRtcpTimer.Interval = seconds * 1000;
-            m_pRtcpTimer.Enabled = true;
+            m_pRtcpTimer.Start();
         }
 
         #endregion
@@ -1321,10 +1329,20 @@ namespace LumiSoft.Net.RTP
         /// Is called when RTP socket has finisehd data sending.
         /// </summary>
         /// <param name="ar">The result of the asynchronous operation.</param>
-        private void RtpAsyncSocketSendCompleted(IAsyncResult ar)
+        private void RtpAsyncSocketSendCompleted(
+#if NETSTANDARD
+            int bytesRead
+#else
+            IAsyncResult ar
+#endif
+            )
         {
             try{
+#if NETSTANDARD
+                m_RtpBytesSent += bytesRead;
+#else
                 m_RtpBytesSent += m_pRtpSocket.EndSendTo(ar);
+#endif
                 m_RtpPacketsSent++;
             }
             catch{

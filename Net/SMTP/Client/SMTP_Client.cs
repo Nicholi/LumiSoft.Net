@@ -189,7 +189,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -688,7 +688,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -1173,7 +1173,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -1543,7 +1543,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -1937,7 +1937,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -2343,7 +2343,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -2453,7 +2453,13 @@ namespace LumiSoft.Net.SMTP.Client
                         m_BdatSendBuffer = new byte[64100]; // 100 bytes for "BDAT xxxxxx...CRLF"
 
                         // Start reading message data-block.
+#if NETSTANDARD
+                        // NOTE synchronous now
+                        var bytesRead = m_pStream.Read(m_pBdatBuffer,0,m_pBdatBuffer.Length);
+                        this.BdatChunkReadingCompleted(bytesRead);
+#else
                         m_pStream.BeginRead(m_pBdatBuffer,0,m_pBdatBuffer.Length,this.BdatChunkReadingCompleted,null);
+#endif
                     }
                     // DATA.
                     else{
@@ -2528,10 +2534,20 @@ namespace LumiSoft.Net.SMTP.Client
             /// Is called when message data block for BDAT reading has completed.
             /// </summary>
             /// <param name="ar">Asynchronous result.</param>
-            private void BdatChunkReadingCompleted(IAsyncResult ar)
+            private void BdatChunkReadingCompleted(
+#if NETSTANDARD
+                int bytesRead
+#else
+                IAsyncResult ar
+#endif
+                )
             {
                 try{
+#if NETSTANDARD
+                    m_BdatBytesInBuffer = bytesRead;
+#else
                     m_BdatBytesInBuffer = m_pStream.EndRead(ar);
+#endif
 
                     /* RFC 3030 2.
                         bdat-cmd   ::= "BDAT" SP chunk-size [ SP end-marker ] CR LF
@@ -2638,7 +2654,13 @@ namespace LumiSoft.Net.SMTP.Client
                             // Send next BDAT data-chunk.
                             else{
                                 // Start reading next message data-block.
+#if NETSTANDARD
+                                // NOTE synchronous now
+                                var bytesRead = m_pStream.Read(m_pBdatBuffer,0,m_pBdatBuffer.Length);
+                                this.BdatChunkReadingCompleted(bytesRead);
+#else
                                 m_pStream.BeginRead(m_pBdatBuffer,0,m_pBdatBuffer.Length,this.BdatChunkReadingCompleted,null);
+#endif
                             }
                         }
                         // BDAT failed.
@@ -2944,7 +2966,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -3262,7 +3284,7 @@ namespace LumiSoft.Net.SMTP.Client
                     wait.Set();
                 }
                 wait.WaitOne();
-                wait.Close();
+                wait.CloseOrDispose();
 
                 if(op.Error != null){
                     throw op.Error;
@@ -3917,7 +3939,7 @@ namespace LumiSoft.Net.SMTP.Client
             }
             else{
                 foreach(string c in m_pEsmtpFeatures){
-                    if(string.Equals(c,capability,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(c,capability, Helpers.GetDefaultIgnoreCaseComparison())){
                         return true;
                     }
                 }
@@ -4426,7 +4448,7 @@ namespace LumiSoft.Net.SMTP.Client
                 // Search AUTH entry.
                 foreach(string feature in this.EsmtpFeatures){
                     string featureName = feature.Split(' ')[0];
-                    if(string.Equals(featureName,SMTP_ServiceExtensions.AUTH,StringComparison.InvariantCultureIgnoreCase)){
+                    if(string.Equals(featureName,SMTP_ServiceExtensions.AUTH, Helpers.GetDefaultIgnoreCaseComparison())){
                         // Remove AUTH<SP> and split authentication methods.
                         return feature.Substring(4).Trim().Split(' ');
                     }
@@ -4634,7 +4656,7 @@ namespace LumiSoft.Net.SMTP.Client
 				}
 
                 // Parse server challenge.
-                AUTH_SASL_DigestMD5_Challenge challenge = AUTH_SASL_DigestMD5_Challenge.Parse(Encoding.Default.GetString(Convert.FromBase64String(line.Split(' ')[1])));
+                AUTH_SASL_DigestMD5_Challenge challenge = AUTH_SASL_DigestMD5_Challenge.Parse(Helpers.GetDefaultEncoding().GetString(Convert.FromBase64String(line.Split(' ')[1])));
 
                 // Construct our response to server challenge.
                 AUTH_SASL_DigestMD5_Response response = new AUTH_SASL_DigestMD5_Response(
@@ -4648,7 +4670,7 @@ namespace LumiSoft.Net.SMTP.Client
                 );
 
                 // Send authentication info to server.
-				WriteLine(Convert.ToBase64String(Encoding.Default.GetBytes(response.ToResponse())));
+				WriteLine(Convert.ToBase64String(Helpers.GetDefaultEncoding().GetBytes(response.ToResponse())));
 
                 // Read server response.
 				line = ReadLine();
@@ -4658,7 +4680,7 @@ namespace LumiSoft.Net.SMTP.Client
 				}
 
                 // Check rspauth value.
-                if(!string.Equals(Encoding.Default.GetString(Convert.FromBase64String(line.Split(' ')[1])),response.ToRspauthResponse(userName,password),StringComparison.InvariantCultureIgnoreCase)){
+                if(!string.Equals(Helpers.GetDefaultEncoding().GetString(Convert.FromBase64String(line.Split(' ')[1])),response.ToRspauthResponse(userName,password), Helpers.GetDefaultIgnoreCaseComparison())){
                     throw new Exception("SMTP server 'rspauth' value mismatch.");
                 }
 

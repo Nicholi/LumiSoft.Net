@@ -1,4 +1,6 @@
-﻿using System;
+﻿// will likely never be supported because of dependency on System.Windows.Forms
+#if !NETSTANDARD
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
@@ -816,7 +818,7 @@ namespace LumiSoft.Net.RTP.Debug
 
         private bool                   m_IsDisposed = false;
         private RTP_MultimediaSession  m_pSession   = null;
-        private Timer                  m_pTimer     = null;
+        private TimerEx                m_pTimer     = null;
 
         /// <summary>
         /// Default constructor.
@@ -842,10 +844,8 @@ namespace LumiSoft.Net.RTP.Debug
             m_pSession.LocalParticipant.SourceRemoved += new EventHandler<RTP_SourceEventArgs>(Participant_SourceRemoved);
             //m_pSession.Disposed
 
-            m_pTimer = new Timer();
-            m_pTimer.Interval = 1000;
-            m_pTimer.Tick += new EventHandler(m_pTimer_Tick);
-            m_pTimer.Enabled = true;
+            m_pTimer = new TimerEx(m_pTimer_Tick, 1000);
+            m_pTimer.Start();
 
             foreach(RTP_Session s in m_pSession.Sessions){
                 ComboBoxItem item = new ComboBoxItem("Session: " + s.GetHashCode(),new RTP_SessionStatistics(s));
@@ -1259,3 +1259,4 @@ namespace LumiSoft.Net.RTP.Debug
 
     }
 }
+#endif
