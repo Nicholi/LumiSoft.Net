@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
 	<RootNamespace>LumiSoft.Net</RootNamespace>
+	<PackageId>LumiSoft.Net</PackageId>
+	<Version>2.1</Version>
+	<Authors>Viacheslav.Manulik</Authors>
+	<Company />
+	<Product>LumiSoft.Net</Product>
+	<PackageProjectUrl>https://github.com/pruiz/LumiSoft.Net</PackageProjectUrl>
+	<Description>Version of LumiSoft.Net library with community fixes.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
